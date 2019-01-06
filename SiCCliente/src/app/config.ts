@@ -6,5 +6,5 @@ export class Config {
     
     static sicGcUrl = 'https://sicgc-g8583.azurewebsites.net/api/';
     static sicEncomendasUrl = 'https://sic-encomendas-g8583.herokuapp.com/'
-    static sicEntregasUrl = 'http://40.89.154.142:3001/'
+    static sicEntregasUrl = '40.89.154.142:3001/'
 }
