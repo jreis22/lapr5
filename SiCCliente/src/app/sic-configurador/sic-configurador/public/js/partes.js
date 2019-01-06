@@ -1,5 +1,5 @@
 import * as Constants from './constants'
-import * as THREE from 'three';
+import * as THREE from '../../../../../../node_modules/three';
 
 const ESPESSURA_CABIDE = 2;
 const NUMERO_FATIAS_CABIDE = 25.0;

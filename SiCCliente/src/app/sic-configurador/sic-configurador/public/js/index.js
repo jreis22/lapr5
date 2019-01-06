@@ -1,6 +1,6 @@
-import * as THREE from 'three';
-import * as TWEEN from 'tween';
-import { OrbitControls } from 'three-orbitcontrols-ts';
+import * as THREE from '../../../../../../node_modules/three';
+import * as TWEEN from '../../../../../../node_modules/tween';
+import { OrbitControls } from '../../../../../../node_modules/three-orbitcontrols-ts';
 import * as Constants from './constants';
 import { Armario } from './armario';
 import * as Partes from './partes';
