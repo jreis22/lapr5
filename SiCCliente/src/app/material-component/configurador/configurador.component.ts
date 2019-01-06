@@ -334,7 +334,7 @@ export class ConfiguradorComponent implements OnInit, AfterViewInit {
     let tipo = this.parteToIndexConfigurador(parte.tipo);
 
     //if (this.partesAdicionadas.filter(produto => produto.id == parte.id).length == 0)
-    if(Configurador.validarAlturaParte(itemParte, this.modulosAdicionados[this.moduloAdicionadoSelecionado])) {
+    if(!Configurador.validarAlturaParteIndex(itemParte, this.moduloAdicionadoSelecionado)) {
       this.displayMessage('Altura de parte inválida.');
       return;
     }

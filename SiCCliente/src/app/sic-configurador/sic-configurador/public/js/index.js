@@ -578,6 +578,11 @@ export function validarAlturaParte(parte, modulo) {
 	return modulo.alturaOcupadaTotal() + parte.altura <= modulo.altura;
 }
 
+export function validarAlturaParteIndex(parte, moduloIndex) {
+	let modulo = armario.modulos[moduloIndex].modulo;
+	return modulo.alturaOcupadaTotal() + parte.altura <= modulo.altura;
+}
+
 export function removerParte(indexModulo, indexParte) {
 /*
 	let selectModulo = document.getElementById('listaModulos');
