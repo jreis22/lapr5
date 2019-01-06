@@ -8,7 +8,7 @@
           <mat-card-subtitle> Por favor escolha as opções disponíveis para criar um material (nome é obrigatório).
             Todas as outras opções permitem criar materiais com diferentes texturas e uma lista de acabamentos.
             Caso não sejam indicadas opções e apenas o nome, o material será criado com valores padrão.</mat-card-subtitle>
-  
+
           <mat-grid-list cols="3" fxLayoutWrap="wrap" rowHeight="60px">
             <!-- escrever um nome -->
             <mat-grid-tile [colspan]="1" [rowspan]="1">
@@ -44,15 +44,16 @@
                   <div mat-menu-item class="my-btn" *ngFor="let acabamento of acabamentosList; let i = index;">
                     <mat-grid-list cols="3" rowHeight="1.8:1">
                       <mat-grid-tile class="grid-tile" [colspan]="2" [rowspan]="1">
-                        <mat-checkbox class="chkbox" (click)="$event.stopPropagation();" [(ngModel)]="acabamentosListSelectedCriar[i]"
-                          [ngModelOptions]="{standalone: true}">
+                        <mat-checkbox class="chkbox" (click)="$event.stopPropagation();incrementoFormGroup.controls['incrementoPrecoCtrl'].enable()"
+                          [(ngModel)]="acabamentosListSelectedCriar[i]" [ngModelOptions]="{standalone: true}">
                           {{i+1}} : {{acabamento.tipo}}</mat-checkbox>
                       </mat-grid-tile>
+                      <!-- selecionar preço do acabamento -->
                       <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field class="right-align-acabamento">
                           <input matInput type="number" min="0" step="0.50" placeholder="{{precoFormIncremento}}"
                             (click)="$event.stopPropagation();" formControlName="incrementoPrecoCtrl" (change)="initializePrecoList(i)">
-                            <mat-icon class="icon-width" matSuffix>euro_symbol</mat-icon>
+                          <mat-icon class="icon-width" matSuffix>euro_symbol</mat-icon>
                         </mat-form-field>
                       </mat-grid-tile>
                     </mat-grid-list>
@@ -71,7 +72,7 @@
               </form>
             </mat-grid-tile>
           </mat-grid-list>
-  
+
           <input type="file" #fileCriar style="display: none" accept="image/x-png,image/jpeg" (click)="fileCriar.value = null"
             value="" (change)="uploadCancelButton($event)" />
           <p class="button-center">
@@ -91,10 +92,10 @@
               </button>
             </span>
           </p>
-  
+
         </mat-card-content>
       </mat-card>
-  
+
       <!-- EDITAR UM MATERIAL -->
       <mat-card>
         <mat-card-content>
@@ -148,21 +149,22 @@
                   <div mat-menu-item class="my-btn" *ngFor="let acabamento of acabamentosList; let i = index;">
                     <mat-grid-list cols="3" rowHeight="1.8:1">
                       <mat-grid-tile class="grid-tile" [colspan]="2" [rowspan]="1">
-                        <mat-checkbox class="chkbox" (click)="$event.stopPropagation();" [(ngModel)]="acabamentosListSelectedEditar[i]"
+                        <mat-checkbox class="chkbox" (click)="$event.stopPropagation();changePreco(i);" [(ngModel)]="acabamentosListSelectedEditar[i]"
                           [ngModelOptions]="{standalone: true}">
                           {{i+1}} : {{acabamento.tipo}}</mat-checkbox>
                       </mat-grid-tile>
+                      <!-- editar o preço do acabamento -->
                       <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field class="right-align-acabamento">
                           <input matInput type="number" min="0" step="0.50" placeholder="{{precoFormIncremento}}"
-                            (click)="$event.stopPropagation();"  [(ngModel)]="precosListSelectedEditar[i]">
-                            <mat-icon class="icon-width" matSuffix>euro_symbol</mat-icon>
+                            (click)="$event.stopPropagation();" [(ngModel)]="precosListSelectedEditar[i]" [disabled]="!acabamentosListSelectedEditar[i]">
+                          <mat-icon class="icon-width" matSuffix>euro_symbol</mat-icon>
                         </mat-form-field>
                       </mat-grid-tile>
                     </mat-grid-list>
                   </div>
                 </mat-menu>
-  
+
                 <label *ngIf="disabledAcabamentosList==true">
                   [Não existem acabamentos!]
                 </label>
@@ -200,7 +202,7 @@
               </form>
             </mat-grid-tile>
           </mat-grid-list>
-  
+
           <input type="file" #fileEditar style="display: none" accept="image/x-png,image/jpeg" (change)="uploadCancelButton2($event)" />
           <p class="button-center">
             <span class="button-padding">
@@ -214,7 +216,7 @@
           </p>
         </mat-card-content>
       </mat-card>
-  
+
       <!-- ELIMINAR UM MATERIAL -->
       <div fxLayout="row">
         <div fxFlex.gt-sm="50%">
@@ -232,20 +234,21 @@
               <label *ngIf="disabledMateriaisList==true">
                 [Não existem materiais!]
               </label>
-  
+
               <p class="button-center">
                 <button [disabled]="disableEliminar" mat-raised-button color="primary" (click)="botaoEliminarEvent()">Eliminar</button>
               </p>
             </mat-card-content>
           </mat-card>
         </div>
-  
+
         <!-- LISTAR MATERIAIS -->
         <div fxFlex.gt-sm="50%">
           <mat-card>
             <mat-card-content>
               <mat-card-title> Listar materiais </mat-card-title>
-              <mat-card-subtitle> Listagem de todos os materiais existentes/disponíveis e todas as suas características.
+              <mat-card-subtitle> Listagem de todos os materiais existentes/disponíveis e todas as suas
+                características.
               </mat-card-subtitle>
               <p class="button-center">
                 <button *ngIf="disabledMateriaisList==false" mat-raised-button style="column-width: 100%"
@@ -273,7 +276,7 @@
                   </mat-menu>
                 </button>
               </mat-menu>
-  
+
               <label *ngIf="disabledMateriaisList==true">
                 [Não existem materiais!]
               </label>

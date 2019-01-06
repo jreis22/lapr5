@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
-import * as Configurador from '../../../../../sic-configurador/sic-configurador/public/js/index'
+import * as Configurador from '../../sic-configurador/sic-configurador/public/js/index'
 import { Material } from '../../gestor/material/material';
 import { MaterialService } from '../../gestor/material/material.service';
-import * as Constants from '../../../../../sic-configurador/sic-configurador/public/js/constants';
+import * as Constants from '../../sic-configurador/sic-configurador/public/js/constants';
 import { Acabamento } from '../../gestor/acabamento/acabamento';
 import { Produto } from '../../gestor/produto/produto';
 import { ProdutoService } from '../../gestor/produto/produto.service';

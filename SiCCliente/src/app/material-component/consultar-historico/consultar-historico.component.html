@@ -14,16 +14,28 @@
         <td mat-cell *matCellDef="let element"> {{element.preco}} </td>
       </ng-container>
 
-      <!-- Data Alterado -->
-      <ng-container matColumnDef="dataAlterado">
-        <th mat-header-cell *matHeaderCellDef> Data da alteração </th>
-        <td mat-cell *matCellDef="let element"> {{element.dataAlterado}} </td>
+      <!-- Nome Acabamento -->
+      <ng-container matColumnDef="nomeAcabamento">
+        <th mat-header-cell *matHeaderCellDef> Nome do Acabamento </th>
+        <td mat-cell *matCellDef="let element"> {{element.nomeAcabamento}} </td>
+      </ng-container>
+
+      <!-- Preço Acabamento -->
+      <ng-container matColumnDef="precoAcabamento">
+        <th mat-header-cell *matHeaderCellDef> Incremento de Preço (€) </th>
+        <td mat-cell *matCellDef="let element"> {{element.precoAcabamento}} </td>
       </ng-container>
 
       <!-- Hora Alterado -->
       <ng-container matColumnDef="horaAlterado">
         <th mat-header-cell *matHeaderCellDef> Hora da alteração </th>
         <td mat-cell *matCellDef="let element"> {{element.horaAlterado}} </td>
+      </ng-container>
+
+      <!-- Data Alterado -->
+      <ng-container matColumnDef="dataAlterado">
+        <th mat-header-cell *matHeaderCellDef> Data da alteração </th>
+        <td mat-cell *matCellDef="let element"> {{element.dataAlterado}} </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

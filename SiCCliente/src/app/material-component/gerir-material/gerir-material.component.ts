@@ -1,4 +1,4 @@
-import { Component, OnInit,ViewEncapsulation , ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { Material } from '../../gestor/material/material';
 import { MaterialService } from '../../gestor/material/material.service';
@@ -6,6 +6,8 @@ import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { AcabamentoService } from '../../gestor/acabamento/acabamento.service';
 import { Acabamento } from '../../gestor/acabamento/acabamento';
 import { MaterialAcabamento } from '../../gestor/material/materialAcabamento';
+import { HistoricoMaterialService } from '../../gestor/historico/historico-material.service';
+import { HistoricoPrecosMaterial } from '../../gestor/historico/historico-precos-material';
 
 @Component({
   selector: 'app-gerir-material',
@@ -54,6 +56,7 @@ export class GerirMaterialComponent implements OnInit {
   precosListSelectedEditar: number[] = [];
   selectedMaterialAcabamentosList: Acabamento[] = [];
   listarMaterialAcabamentosList: Acabamento[] = [];
+  materiaisAcabamentosList: MaterialAcabamento[] = [];
 
   // FLAGS
 
@@ -69,7 +72,8 @@ export class GerirMaterialComponent implements OnInit {
   constructor(private materialService: MaterialService,
     private _formBuilder: FormBuilder,
     public snackBar: MatSnackBar,
-    private acabamentoService: AcabamentoService) { }
+    private acabamentoService: AcabamentoService,
+    private historicoMaterialService: HistoricoMaterialService) { }
 
   ngOnInit() {
     this.criarFormGroup = this._formBuilder.group({
@@ -78,13 +82,15 @@ export class GerirMaterialComponent implements OnInit {
     });
     this.editarFormGroup = this._formBuilder.group({
       editarNomeCtrl: [{ value: '', disabled: true }, Validators.required],
-      editarPrecoCtrl: [{ value: '', disabled: true }, Validators.required]
+      editarPrecoCtrl: [{ value: '', disabled: true }, Validators.required],
     });
     this.incrementoFormGroup = this._formBuilder.group({
-      incrementoPrecoCtrl: ['']
+      incrementoPrecoCtrl: [{ value: '', disabled: true }, Validators.required],
+      editarPrecoIncrementoCtrl: ['', Validators.required]
     });
     this.getMateriais();
     this.getAcabamentos();
+    this.getMateriaisAcabamentos();
   }
 
   // FUNCTIONS DE BUTTONS
@@ -98,7 +104,6 @@ export class GerirMaterialComponent implements OnInit {
   }
 
   uploadCancelButton($event) {
-    console.log(1);
     if ($event.target.files[0]) {
       // Se foi escolhido um ficheiro em vez do cancel
       var fileType = $event.target.files[0].type;
@@ -145,11 +150,8 @@ export class GerirMaterialComponent implements OnInit {
     this.enableImportButton();
   }
 
-  initializePrecoList(index: number){
-    
-    var incrementoP = this.incrementoFormGroup.controls['incrementoPrecoCtrl'].value;
-
-    this.precoList[index] = incrementoP;
+  initializePrecoList(index: number) {
+    this.precoList[index] = this.incrementoFormGroup.controls['incrementoPrecoCtrl'].value;
   }
 
   botaoCriarEvent() {
@@ -166,7 +168,7 @@ export class GerirMaterialComponent implements OnInit {
         //Se algum acabamento foi selecionado
         if (this.acabamentosListSelectedCriar.includes(true)) {
           for (let i = 0; i < this.acabamentosListSelectedCriar.length; i++) {
-          
+
             //Quais os que foram selecionados
             if (this.acabamentosListSelectedCriar[i]) {
               acabamentos.push(this.acabamentosList[i]);
@@ -197,43 +199,6 @@ export class GerirMaterialComponent implements OnInit {
 
   }
 
-  botaoAdicionarIncrementoEvent(){
-    if((!this.incrementoFormGroup.get("incrementoPrecoCtrl").invalid)){
-      if (this.selectedMaterial == null) {
-        this.snackBar.open("Erro!", "Selecione um material!", {
-          duration: 4000
-        });
-      }else if (this.selectedAcabamento == null) {
-        this.snackBar.open("Erro!", "Selecione um acabamento!", {
-          duration: 4000
-        });
-      }
-
-      let acabamentoId = this.selectedAcabamento.id;
-      let materialId = this.selectedMaterial.id;
-      var incrementoPreco = this.incrementoFormGroup.controls['incrementoPrecoCtrl'].value;
-
-      //let incrementoPreco: IncrementoPreco = new IncrementoPreco(ip);
-      this.addIncremento(materialId,acabamentoId,incrementoPreco);
-    }else{
-      this.snackBar.open("Erro!", "Insira um preço válido!", {
-        duration: 4000
-      });
-    }
-  }
-
-  addIncremento(materialId: number, acabamentoId: number,incrementoPreco: number){
-    this.materialService.addIncremento({ acabamentoId, materialId,incrementoPreco } as MaterialAcabamento).
-    subscribe(_ => {
-      this.fireSnackBar("Sucesso!", "Incremento de preço adicionado com sucesso!");
-      this.resetAll();
-    },
-      erro => {
-        alert("Serviço indisponível!");
-        console.log(erro);
-      });
-  }
-
   botaoEditarEvent() {
     //Se o nome for válido
     if (!this.editarFormGroup.invalid) {
@@ -247,11 +212,15 @@ export class GerirMaterialComponent implements OnInit {
         }
         var acabamentosEliminar = [];
         var acabamentosAdicionar = [];
+        var acabamentosSelecionados = [];
+        var precosEditar = [];
 
+        //TODOS OS ACABAMENTOS SELECIONADOS
         for (let i = 0; i < this.acabamentosListSelectedEditar.length; i++) {
           var acabamentoVer = this.acabamentosList[i];
           //Significa que o acabamento a ver está selecionado
           if (this.acabamentosListSelectedEditar[i]) {
+            acabamentosSelecionados.push(acabamentoVer);
             //Se o material não tinha este acabamento é para ser adicionado à bd
             if (!this.selectedMaterialAcabamentosList.find(acabamento2 => acabamento2['id'] === acabamentoVer.id)) {
               acabamentosAdicionar.push(acabamentoVer);
@@ -264,7 +233,12 @@ export class GerirMaterialComponent implements OnInit {
           }
         }
 
-        this.updateMaterial(idAlterar, tipo, precoBase, textura, acabamentosAdicionar, acabamentosEliminar);
+        //Limpa o array de preços
+        this.precosListSelectedEditar = this.precosListSelectedEditar.filter(function (el, i) {
+          return el != null;
+        });
+
+        this.updateMaterial(idAlterar, tipo, precoBase, textura, acabamentosAdicionar, acabamentosEliminar, acabamentosSelecionados);
       } else {
         this.snackBar.open("Erro!", "Preço tem que ser maior que 0!", {
           duration: 4000
@@ -285,40 +259,39 @@ export class GerirMaterialComponent implements OnInit {
 
   // EVENTS HANDLER
 
+  changePreco(index: number) {
+    if (this.acabamentosListSelectedEditar[index]) {
+      this.precosListSelectedEditar[index] = null;
+    } else {
+      this.precosListSelectedEditar[index] = 0;
+    }
+  }
+
   materialEditarEvent(material: Material) {
+    this.selectedMaterialAcabamentosList = [];
     this.acabamentosListSelectedEditar = [false];
+    this.precosListSelectedEditar = [];
     this.selectedMaterialEditar = material;
     this.editarFormGroup.get("editarNomeCtrl").setValue(material.tipo);
     this.editarFormGroup.get("editarPrecoCtrl").setValue(material.precoBase);
     this.materialTextEditar = material.tipo;
     this.selectedTexturaEditar = material.textura;
     this.getAcabamentosMaterial(material.id);
-    this.selectPrecos(material);
     this.newFile = false;
     this.unlockEditar();
   }
 
-  private selectPrecos(material: Material){
-    for(let i = 0; i < this.acabamentosList.length; i++){
-      this.materialService.getMaterialAcabamento(material.id,this.acabamentosList[i].id).subscribe(
-        materialAc =>{
-          this.precosListSelectedEditar[i] = materialAc.incrementoPreco;
-        }
-      );
-    }
-  }
-
-  private organizeList(){
-    for(let i = 0; i < this.precoList.length; i++){
-      if(this.acabamentosListSelectedCriar[i]){
-        if(this.precoList[i] != null){
+  private organizeList() {
+    for (let i = 0; i < this.precoList.length; i++) {
+      if (this.acabamentosListSelectedCriar[i]) {
+        if (this.precoList[i] != null) {
           this.incrementoList.push(this.precoList[i]);
-        }else{
+        } else {
           this.incrementoList.push(0);
         }
       }
     }
-}
+  }
 
   materialEliminarEvent(material: Material) {
     this.listar = false;
@@ -376,6 +349,17 @@ export class GerirMaterialComponent implements OnInit {
       });
   }
 
+  private getMateriaisAcabamentos(): void {
+    this.materialService.getMateriaisAcabamentos().subscribe(data => {
+      this.materiaisAcabamentosList = data;
+    },
+      erro => {
+        this.flagServer = true;
+        console.log(erro);
+        this.statusMessage = "Error: Service Unavailable";
+      });
+  }
+
   private addMaterial(tipo: string, precoBase: number, textura: File, acabamentos: Acabamento[]): void {
     tipo = tipo.trim();
     this.disableBotaoCriar = true;
@@ -383,23 +367,33 @@ export class GerirMaterialComponent implements OnInit {
     this.organizeList();
     this.materialService.addMaterial({ tipo, precoBase, textura } as Material)
       .subscribe(material => {
+        //Se tiver acabamentos
         if (acabamentos.length > 0) {
           var materialId = material.id;
-        
+
           acabamentos.forEach((acabamento, index, acabamentos) => {
             let acabamentoId = acabamento.id;
             var incrementoPreco = this.incrementoList[ind];
             ind++;
 
-            this.materialService.addMaterialAcabamento({ acabamentoId, materialId,incrementoPreco } as MaterialAcabamento)
+            this.materialService.addMaterialAcabamento({ acabamentoId, materialId, incrementoPreco } as MaterialAcabamento)
               .subscribe(_ => {
-                //Se for o último acabamento e todos os anteriores foram criados com sucesso
-                if (Object.is(acabamentos.length - 1, index)) {
-                  this.getMateriais();
-                  this.fireSnackBar("Sucesso!", "Material criado com sucesso!");
-                  this.disableBotaoCriar = false;
-                  this.resetAll();
-                }
+                this.historicoMaterialService.addHistoricoPrecosMaterial({ materialId, acabamentoId, incrementoPreco, precoBase } as HistoricoPrecosMaterial)
+                  .subscribe(_ => {
+                    //Se for o último acabamento e todos os anteriores foram criados com sucesso
+                    if (Object.is(acabamentos.length - 1, index)) {
+                      this.getMateriais();
+                      this.getMateriaisAcabamentos();
+                      this.fireSnackBar("Sucesso!", "Material criado com sucesso!");
+                      this.disableBotaoCriar = false;
+                      this.resetAll();
+                    }
+                  },
+                    erro => {
+                      alert("Serviço indisponível!");
+                      console.log(erro);
+                      this.disableBotaoCriar = true;
+                    });
               },
                 erro => {
                   alert("Serviço indisponível!");
@@ -421,20 +415,79 @@ export class GerirMaterialComponent implements OnInit {
         });
   }
 
-  private updateMaterial(idAlterar: number, tipo: string, precoBase: number, textura: File, acabamentosAdicionar: Acabamento[], acabamentosEliminar: Acabamento[]): void {
+  private updateMaterial(idAlterar: number, tipo: string, precoBase: number, textura: File, acabamentosAdicionar: Acabamento[], acabamentosEliminar: Acabamento[], acabamentosSelecionados: Acabamento[]): void {
     this.disableEditar = true;
     this.materialService.updateMaterial(idAlterar, { tipo, precoBase, textura } as Material)
       .subscribe(_ => {
-        if (acabamentosAdicionar.length > 0 || acabamentosEliminar.length > 0) {
-          var materialId = idAlterar
-          acabamentosAdicionar.forEach((acabamento, indexAdicionar, acabamentosAdicionar) => {
-            let acabamentoId = acabamento.id;
-            let incrementoPreco =  this.precosListSelectedEditar[indexAdicionar];
-            this.materialService.addMaterialAcabamento({ acabamentoId, materialId,incrementoPreco } as MaterialAcabamento)
-              .subscribe(_ => {
-                //Se for o último acabamento e todos os anteriores foram criados com sucesso e não existem materiais a eliminar
-                if (Object.is(acabamentosAdicionar.length - 1, indexAdicionar) && acabamentosEliminar.length == 0) {
+        var materialId = idAlterar;
+
+        //Para cada acabamento selecionado
+        acabamentosSelecionados.forEach((acabamentoSelecionado, indexEditarAdicionar, acabamentosEditarAdicionar) => {
+          var acabamentoId = acabamentoSelecionado.id;
+          var incrementoPreco = this.precosListSelectedEditar[indexEditarAdicionar];
+
+          if (acabamentosAdicionar.length > 0) {
+            //Se for um acabamento novo
+            if (acabamentosAdicionar.find(a => a.id == acabamentoSelecionado.id)) {
+              this.materialService.addMaterialAcabamento({ acabamentoId, materialId, incrementoPreco } as MaterialAcabamento)
+                .subscribe(_ => {
+                  this.historicoMaterialService.addHistoricoPrecosMaterial({ materialId, acabamentoId, incrementoPreco, precoBase } as HistoricoPrecosMaterial)
+                    .subscribe(_ => {
+                      //Se for o último acabamento e todos os anteriores foram criados com sucesso
+                      if (acabamentosEliminar.length == 0 && Object.is(acabamentosEditarAdicionar.length - 1, indexEditarAdicionar)) {
+                        this.getMateriais();
+                        this.getMateriaisAcabamentos();
+                        this.fireSnackBar("Sucesso!", "Material alterado com sucesso!");
+                        this.disableEditar = false;
+                        this.resetAll();
+                      }
+                    },
+                      erro => {
+                        alert("Serviço indisponível!");
+                        console.log(erro);
+                        this.disableEditar = false;
+                      });
+                },
+                  erro => {
+                    alert("Serviço indisponível!");
+                    console.log(erro);
+                    this.disableEditar = false;
+                  });
+              //Se for um acabamento ja existente
+            } else {
+              this.materialService.updateMaterialAcabamento({ acabamentoId, materialId, incrementoPreco } as MaterialAcabamento).subscribe(_ => {
+                this.historicoMaterialService.addHistoricoPrecosMaterial({ materialId, acabamentoId, incrementoPreco, precoBase } as HistoricoPrecosMaterial)
+                  .subscribe(_ => {
+                    //Se for o último acabamento e todos os anteriores foram criados com sucesso
+                    if (acabamentosEliminar.length == 0 && Object.is(acabamentosEditarAdicionar.length - 1, indexEditarAdicionar)) {
+                      this.getMateriais();
+                      this.getMateriaisAcabamentos();
+                      this.fireSnackBar("Sucesso!", "Material alterado com sucesso!");
+                      this.disableEditar = false;
+                      this.resetAll();
+                    }
+                  },
+                    erro => {
+                      alert("Serviço indisponível!");
+                      console.log(erro);
+                      this.disableEditar = false;
+                    });
+              },
+                erro => {
+                  alert("Serviço indisponível!");
+                  console.log(erro);
+                  this.disableEditar = false;
+                });
+            }
+            //Se existem apenas acabamentos para dar update
+          } else {
+            //SE FOR O MESMO PREÇO QUE JA LA ESTAVA E O MESMO INCREMENTO
+            if (this.materiaisAcabamentosList.find(a => (a.acabamentoId == acabamentoId && a.materialId == materialId)).incrementoPreco == incrementoPreco && this.materiaisList.find(m => m.id == materialId)) {
+              this.materialService.updateMaterialAcabamento({ acabamentoId, materialId, incrementoPreco } as MaterialAcabamento).subscribe(_ => {
+                //Se for o último acabamento e todos os anteriores foram criados com sucesso
+                if (acabamentosEliminar.length == 0 && Object.is(acabamentosEditarAdicionar.length - 1, indexEditarAdicionar)) {
                   this.getMateriais();
+                  this.getMateriaisAcabamentos();
                   this.fireSnackBar("Sucesso!", "Material alterado com sucesso!");
                   this.disableEditar = false;
                   this.resetAll();
@@ -445,8 +498,35 @@ export class GerirMaterialComponent implements OnInit {
                   console.log(erro);
                   this.disableEditar = false;
                 });
-          });
+            } else {
+              this.materialService.updateMaterialAcabamento({ acabamentoId, materialId, incrementoPreco } as MaterialAcabamento).subscribe(_ => {
+                this.historicoMaterialService.addHistoricoPrecosMaterial({ materialId, acabamentoId, incrementoPreco, precoBase } as HistoricoPrecosMaterial)
+                  .subscribe(_ => {
+                    //Se for o último acabamento e todos os anteriores foram criados com sucesso
+                    if (acabamentosEliminar.length == 0 && Object.is(acabamentosEditarAdicionar.length - 1, indexEditarAdicionar)) {
+                      this.getMateriais();
+                      this.getMateriaisAcabamentos();
+                      this.fireSnackBar("Sucesso!", "Material alterado com sucesso!");
+                      this.disableEditar = false;
+                      this.resetAll();
+                    }
+                  },
+                    erro => {
+                      alert("Serviço indisponível!");
+                      console.log(erro);
+                      this.disableEditar = false;
+                    });
+              },
+                erro => {
+                  alert("Serviço indisponível!");
+                  console.log(erro);
+                  this.disableEditar = false;
+                });
+            }
+          }
+        });
 
+        if (acabamentosEliminar.length > 0) {
           acabamentosEliminar.forEach((acabamento, indexEliminar, acabamentosEliminar) => {
             let acabamentoId = acabamento.id;
             this.materialService.deleteMaterialAcabamento({ acabamentoId, materialId } as MaterialAcabamento)
@@ -454,6 +534,7 @@ export class GerirMaterialComponent implements OnInit {
                 //Se for o último acabamento e todos os anteriores foram eliminados com sucesso
                 if (Object.is(acabamentosEliminar.length - 1, indexEliminar)) {
                   this.getMateriais();
+                  this.getMateriaisAcabamentos();
                   this.fireSnackBar("Sucesso!", "Material alterado com sucesso!");
                   this.disableEditar = false;
                   this.resetAll();
@@ -465,10 +546,11 @@ export class GerirMaterialComponent implements OnInit {
                   this.disableEditar = false;
                 });
           });
-        } else {
-          //Caso em que não existem nem acabamentos a eliminar nem a adicionar
-          this.getMateriais();
-          this.fireSnackBar("Sucesso!", "Material alterado com sucesso!");
+        }
+
+        //Não foram efetuadas alteracoes
+        if (acabamentosSelecionados.length == 0 && acabamentosEliminar.length == 0) {
+          this.fireSnackBar("Sucesso!", "Não foram realizadas alterações!");
           this.disableEditar = false;
           this.resetAll();
         }
@@ -483,6 +565,7 @@ export class GerirMaterialComponent implements OnInit {
     this.materialService.deleteMaterial(this.selectedMaterialEliminar).
       subscribe(_ => {
         this.getMateriais();
+        this.getMateriaisAcabamentos();
         this.fireSnackBar("Sucesso!", "Material eliminado com sucesso!");
         this.disableEliminar = false;
         this.resetAll();
@@ -503,7 +586,9 @@ export class GerirMaterialComponent implements OnInit {
           this.acabamentosList.forEach(acabamento => {
             if (acabamentos.find(acabamento2 => acabamento2['id'] === acabamento.id)) {
               this.acabamentosListSelectedEditar[counter] = true;
-            
+              var ma: MaterialAcabamento[] = this.materiaisAcabamentosList.filter(ma => ma.materialId == id);
+              var preco: number = ma.find(a => a.acabamentoId == acabamento.id).incrementoPreco;
+              this.precosListSelectedEditar[counter] = preco;
             } else {
               this.acabamentosListSelectedEditar[counter] = false;
             }
@@ -512,10 +597,12 @@ export class GerirMaterialComponent implements OnInit {
         } else {
           this.listarMaterialAcabamentosList = acabamentos;
         }
+
       },
-        erro => { 
+        erro => {
           console.log(erro);
-          this.statusMessage = "Error: Service Unavailable"; });
+          this.statusMessage = "Error: Service Unavailable";
+        });
   }
 
   // FUNCTIONS DE UTILIDADE
@@ -530,11 +617,13 @@ export class GerirMaterialComponent implements OnInit {
 
   lockEditar() {
     this.disableEditar = true;
+    this.disabledMateriaisList = true;
     this.editarFormGroup.disable();
   }
 
   unlockEditar() {
     this.disableEditar = false;
+    this.disabledMateriaisList = false;
     this.editarFormGroup.enable();
   }
 
@@ -555,9 +644,12 @@ export class GerirMaterialComponent implements OnInit {
     this.acabamentosListSelectedEditar = [false];
     this.selectedMaterialAcabamentosList = [];
     this.listarMaterialAcabamentosList = [];
+    this.incrementoList = [];
     this.precoList = [];
+    this.precosListSelectedEditar = [];
     this.criarFormGroup.reset();
     this.editarFormGroup.reset();
+    this.incrementoFormGroup.reset();
     this.maxfiles = false;
     this.listar = false;
   }

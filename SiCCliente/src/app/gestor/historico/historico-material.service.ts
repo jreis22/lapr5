@@ -6,6 +6,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http'
 
 import { Config } from '../../config';
+import { HistoricoPrecosMaterial } from './historico-precos-material';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -22,8 +23,8 @@ export class HistoricoMaterialService {
   constructor(
     private httpClient: HttpClient) { }
 
-  getHistoricoPrecosMaterial(): Observable<any> {
-    return this.httpClient.get(this.url).pipe(map(this.extractData));
+  getHistoricoPrecosMaterial(): Observable<HistoricoPrecosMaterial[]> {
+    return this.httpClient.get<HistoricoPrecosMaterial[]>(this.url);
   }
 
   private extractData(res: Response) {
@@ -40,5 +41,9 @@ export class HistoricoMaterialService {
       );
     }
     return Observable.throw(err);
+  }
+
+  addHistoricoPrecosMaterial(historicoPrecosMaterial: HistoricoPrecosMaterial): Observable<any> {
+    return this.httpClient.post(this.url, historicoPrecosMaterial, httpOptions);
   }
 }

@@ -4,6 +4,8 @@ import { HistoricoMaterialService } from '../../gestor/historico/historico-mater
 import { HistoricoPrecosMaterial } from '../../gestor/historico/historico-precos-material';
 import { Material } from '../../gestor/material/material';
 import { MaterialService } from '../../gestor/material/material.service';
+import { AcabamentoService } from '../../gestor/acabamento/acabamento.service';
+import { Acabamento } from '../../gestor/acabamento/acabamento';
 
 @Component({
   selector: 'app-consultar-historico',
@@ -15,13 +17,16 @@ export class ConsultarHistoricoComponent implements OnInit {
 
   flagServer: boolean = false;
 
-  constructor(private historicoMaterial: HistoricoMaterialService, private materialService: MaterialService) { }
+  constructor(private historicoMaterial: HistoricoMaterialService,
+    private materialService: MaterialService,
+    private acabamentoService: AcabamentoService) { }
 
-  displayedColumns: string[] = ['nomeMaterial', 'preco', 'dataAlterado', 'horaAlterado'];
-  dataSource = new MatTableDataSource<{ nomeMaterial: string, preco: number, dataAlterado: string, horaAlterado: string }>();
+  displayedColumns: string[] = ['nomeMaterial', 'preco', 'nomeAcabamento', 'precoAcabamento', 'horaAlterado', 'dataAlterado'];
+  dataSource = new MatTableDataSource<{ nomeMaterial: string, preco: number, nomeAcabamento: string, precoAcabamento: number, horaAlterado: string, dataAlterado: string }>();
+  rows: Array<{ nomeMaterial: string, preco: number, nomeAcabamento: string, precoAcabamento: number, horaAlterado: string, dataAlterado: string }> = [];
   statusMessage: string;
+  historicoMateriaisList: HistoricoPrecosMaterial[] = [];
   arrayPrecos: Array<String>[];
-  rows: Array<{ nomeMaterial: string, preco: number, dataAlterado: string, horaAlterado: string }> = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -30,26 +35,37 @@ export class ConsultarHistoricoComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  private getHistoricoPrecosMaterial(listaMateriais: Material[]): void {
+  private getHistoricoPrecosMaterial(listaMateriais: Material[], listaAcabamentos: Acabamento[]): void {
     this.historicoMaterial.getHistoricoPrecosMaterial().subscribe(listaPrecosTodosMateriais => {
-      listaMateriais.forEach(material => {
-        var idMaterialVer = material.id;
-        var nomeMaterial = material.tipo;
-        var listaPrecosMaterial = listaPrecosTodosMateriais.filter(m => m.idMaterial == idMaterialVer);
+      //Ordena por id Material
+      listaPrecosTodosMateriais.sort(function (a, b) {
+        return a.materialId - b.materialId;
+      });
 
-        if (listaPrecosMaterial.length > 0) {
-          for (let i = 0; i < listaPrecosMaterial.length; i++) {
-            const materialPreco = listaPrecosMaterial[i];
-            var parts = materialPreco.dataRegisto.split('T');
-            var data = parts[0];
-            var time = parts[1];
-            if (i == 0) {
-              this.rows.push({ nomeMaterial: nomeMaterial , preco: materialPreco.precoBase, dataAlterado: data, horaAlterado: time });
-            } else {
-              this.rows.push({ nomeMaterial: "", preco: materialPreco.precoBase, dataAlterado: data, horaAlterado: time });
-            }
+      var linhaAux: HistoricoPrecosMaterial = null;
+      listaPrecosTodosMateriais.forEach(linha => {
+        var nomeMaterial = "[MATERIAL APAGADO]";
+        var nomeAcabamento = "[ACABAMENTO APAGADO]";
+        //Material foi removido da bd
+        listaMateriais.find(m => m.id == linha.materialId) ? nomeMaterial = listaMateriais.find(m => m.id == linha.materialId).tipo : nomeMaterial = "[MATERIAL APAGADO]";
+        //Acabamento foi removido da bd
+        listaAcabamentos.find(a => a.id == linha.acabamentoId) ? nomeAcabamento = listaAcabamentos.find(a => a.id == linha.acabamentoId).tipo : nomeAcabamento = "[ACABAMENTO APAGADO]";
+        var parts = linha.dataRegisto.toString().split('T');
+        var data = parts[0];
+        var time = parts[1];
+        if (linhaAux != null) {
+          //Mesmo material que o anterior
+          if (linhaAux.materialId == linha.materialId) {
+            this.rows.push({ nomeMaterial: "", preco: linha.precoBase, nomeAcabamento: nomeAcabamento, precoAcabamento: linha.incrementoPreco, horaAlterado: time, dataAlterado: data });
+          } else {
+            //Outro Material
+            this.rows.push({ nomeMaterial: nomeMaterial, preco: linha.precoBase, nomeAcabamento: nomeAcabamento, precoAcabamento: linha.incrementoPreco, horaAlterado: time, dataAlterado: data });
           }
+        } else {
+          // 1ª Linha
+          this.rows.push({ nomeMaterial: nomeMaterial, preco: linha.precoBase, nomeAcabamento: nomeAcabamento, precoAcabamento: linha.incrementoPreco, horaAlterado: time, dataAlterado: data });
         }
+        linhaAux = linha;
       });
       this.dataSource.data = this.rows;
     },
@@ -60,10 +76,18 @@ export class ConsultarHistoricoComponent implements OnInit {
 
   private getMateriais(): void {
     this.materialService.getMateriais().subscribe(listaMateriais => {
-      this.getHistoricoPrecosMaterial(listaMateriais);
+      this.getAcabamentos(listaMateriais);
     },
-      _ => { 
-        this.flagServer=true;
-        this.statusMessage = "Error: Service Unavailable"; });
+      _ => {
+        this.flagServer = true;
+        this.statusMessage = "Error: Service Unavailable";
+      });
   }
+
+  private getAcabamentos(listaMateriais): void {
+    this.acabamentoService.getAcabamentos().subscribe(listaAcabamentos => {
+      this.getHistoricoPrecosMaterial(listaMateriais, listaAcabamentos);
+    });
+  }
+
 }

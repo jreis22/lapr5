@@ -26,6 +26,7 @@
 
 .chkbox {
     padding-right: 1em;
+    padding-left: 1em;
 }
 
 .mat-form-field.mat{
@@ -82,7 +83,7 @@
     justify-content: left;
 }
 
-.grid-tile.mat-figure{
+.grid-tile .mat-figure{
     justify-content: left!important;
     overflow: overlay;
     height: 100%

@@ -80,13 +80,12 @@ export class MaterialService {
     return this.httpClient.delete(this.url + 'Acabamento/' + materialAcabamento.materialId + '/' + materialAcabamento.acabamentoId, httpOptions);
   }
 
-  addIncremento(materialAcabamento: MaterialAcabamento): Observable<any>{
-    var matAcabamento = this.httpClient.get<MaterialAcabamento[]>(this.url + 'Acabamento/' + materialAcabamento.materialId + '/' + materialAcabamento.acabamentoId, httpOptions);
-    if(matAcabamento != null){
-      this.httpClient.delete(this.url + 'Acabamento/' + materialAcabamento.materialId + '/' + materialAcabamento.acabamentoId, httpOptions);    
-      return this.httpClient.post<MaterialAcabamento>(this.url + 'Acabamento', materialAcabamento, httpOptions);        
-    }
-    return this.httpClient.post<MaterialAcabamento>(this.url + 'Acabamento', materialAcabamento, httpOptions);    
+  getMateriaisAcabamentos(): Observable<any> {
+    return this.httpClient.get(this.url + 'Acabamento').pipe(map(this.extractData));
+  }
+
+  updateMaterialAcabamento(materialAcabamento: MaterialAcabamento): Observable<any> {
+    return this.httpClient.put(this.url + 'Acabamento/' + materialAcabamento.materialId + '/' + materialAcabamento.acabamentoId, materialAcabamento, httpOptions);
   }
 
 }
