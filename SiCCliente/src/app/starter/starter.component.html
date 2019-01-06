@@ -1,0 +1,52 @@
+<mat-card>
+    <h1 style="text-align: center">Welcome to SiC Client!</h1>
+</mat-card>
+<mat-card>
+    <mat-card-content>
+        <div style="text-align:left">
+            <div style="text-align: left">
+                <mat-card-title>
+                    <h2>Log in to your account!</h2>
+                </mat-card-title>
+                <mat-form-field appearance="outline">
+                    <input matInput placeholder="Email" required [(ngModel)]="emailLogin">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <input matInput placeholder="Password" type="password" required [(ngModel)]="passwordLogin">
+                </mat-form-field>
+                <mat-form-field appearance="outline" *ngIf="activate">
+                    <input matInput placeholder="One time password" required [(ngModel)]="otpLogin">
+                </mat-form-field>
+                <button mat-raised-button color="primary" (click)="loginUserHTML()">Log in</button>
+            </div>
+            <ng-template #noError>
+            </ng-template>
+        </div>
+    </mat-card-content>
+</mat-card>
+
+<mat-card>
+    <mat-card-content>
+        <div style="text-align:left">
+            <div style="text-align: left">
+                <mat-card-title>
+                    <h2>Register a new account!</h2>
+                </mat-card-title>
+                <mat-form-field appearance="outline">
+                    <input matInput placeholder="Email" required [(ngModel)]="emailRegister">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <input matInput placeholder="Password" required type="password" [(ngModel)]="passwordRegister">
+                </mat-form-field>
+                <div class="termos">
+                    <mat-checkbox class="checkboxTermos" [(ngModel)]="aceitarTermos"></mat-checkbox>
+                    <label class="labelTermos">Aceito os </label>
+                    <label class="labelTermos2" (click)="abrirTermosDeUso()">Termos de Uso</label>
+                </div>
+                <button mat-raised-button color="primary" (click)="registerUserHTML()">Register</button>
+            </div>
+            <ng-template #noError>
+            </ng-template>
+        </div>
+    </mat-card-content>
+</mat-card>

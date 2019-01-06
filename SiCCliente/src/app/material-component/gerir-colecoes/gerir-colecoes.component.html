@@ -1,0 +1,146 @@
+<div *ngIf="!flagServer"> 
+  <div fxLayout="row" fxLayoutWrap="wrap">
+    <div fxFlex.gt-sm="100%" fxFlex="100">
+      <mat-card>
+        <mat-card-content>
+          <div style="text-align:left">
+            <h1>Gestão de Coleções</h1>
+            <mat-tab-group>
+
+              <mat-tab label="Criar Colecao">
+                <div style="text-align: left">
+                  <h2>Criar Nova Coleção</h2>
+                  <mat-form-field>
+                    <input matInput placeholder="Nome Colecao" autocomplete="off" [(ngModel)]="nomeColecao">
+                  </mat-form-field>
+                  <button mat-raised-button color="primary" (click)="addColecao()">Criar</button>
+
+                  <p></p>
+                  <h2>Selecionar Produtos</h2>
+                  <mat-form-field>
+                    <mat-select placeholder="Selecionar" [(ngModel)]="selectedProduto">
+                      <mat-option *ngFor="let prod of allProdutos" [value]="prod" (click)="selectProduto(prod)">
+                        {{prod.nome}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div style="text-align:left">
+                    <nav>
+                      <button mat-raised-button color="primary" (click)="addProduto()">Adicionar Produto</button>
+                    </nav>
+                  </div>
+                </div>
+              </mat-tab>
+
+              <mat-tab label="Editar Colecao">
+                <div style="text-align: left">
+                  <h2>Selecione uma Coleção</h2>
+                  <mat-form-field>
+                    <mat-select placeholder="Selecionar" [(ngModel)]="selectedColecao">
+                      <mat-option *ngFor="let col of allColecoes" [value]="col" (click)="selecionarColecao(col)">
+                        {{col.nome}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <h2>Editar Coleção</h2>
+                  <p></p>
+                  <mat-form-field>
+                    <input matInput placeholder="Editar Nome" [(ngModel)]="nomeUpdate">
+                  </mat-form-field>
+                  <p></p>
+                  <div style="text-align:left">
+                    <nav>
+                      <button mat-raised-button color="primary" (click)="updateColecaoHTML()">Editar</button>
+                      <button mat-raised-button color="warn" (click)="deleteColecao()">Eliminar</button>
+                    </nav>
+                  </div>
+                </div>
+
+                <div fxLayout="row">
+                  <div fxFlex.gt-sm="100%">
+                    <mat-card>
+                      <mat-card-content>
+                        <mat-card-title> Eliminar um produto </mat-card-title>
+                        <mat-card-subtitle> Por favor escolha um produto da lista abaixo para ser eliminado.
+                        </mat-card-subtitle>
+                        <mat-form-field *ngIf="disabledProdutosList==false">
+                          <mat-select placeholder="{{produtoTextEliminar}}"  [(ngModel)]="selectedProduto">
+                            <mat-option *ngFor="let prod of allProdutos" [value]="prod" (click)="selecionarProduto(prod)">
+                              {{prod.nome}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <label *ngIf="disabledProdutosList==true">
+                          Não existem produtos!
+                        </label>
+
+                        <p class="button-center">
+                          <button mat-raised-button color="warn" (click)="deleteProduto()">Eliminar</button>
+                        </p>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+
+                <div fxLayout="row">
+                  <div fxFlex.gt-sm="100%">
+                    <mat-card>
+                      <mat-card-content>
+                        <mat-card-title> Adicionar um produto </mat-card-title>
+                        <mat-card-subtitle> Por favor escolha um produto da lista abaixo para ser adicionado.
+                        </mat-card-subtitle>
+                        <mat-form-field *ngIf="disabledProdutosList==false">
+                          <mat-select placeholder="{{produtoTextAdicionar}} " [(ngModel)]="selectedProduto">
+                            <mat-option *ngFor="let prod of allProdutos" [value]="prod" (click)="selecionarProduto(prod)">
+                              {{prod.nome}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <label *ngIf="disabledProdutosList==true">
+                          Não existem produtos!
+                        </label>
+
+                        <p class="button-center">
+                          <button mat-raised-button color="primary" (click)="adicionarProduto()">Adicionar</button>
+                        </p>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+              </mat-tab>
+
+              <mat-tab label="Listar Colecoes">
+                <div style="text-align: left">
+                  <h2>Listar Coleções</h2>
+                  <mat-form-field>
+                    <mat-select placeholder="Lista de Colecoes" [(ngModel)]="selectedCatalogo">
+                      <mat-option *ngFor="let col of allColecoes" [value]="col" (click)="selecionarColecao(col)">
+                        {{col.nome}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <h3>Produtos da Coleção:</h3>
+                  <mat-list>
+                    <mat-list-item *ngFor="let prod of produtosColecao">
+                      <h3>{{prod.nome}}</h3>
+                    </mat-list-item>
+                  </mat-list>
+                </div>
+
+              </mat-tab>
+            </mat-tab-group>
+            <ng-template #noError>
+            </ng-template>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+<div *ngIf="flagServer">
+  <div id="main">
+    <div class="fof">
+      <h1>Não foi possível aceder ao servidor.</h1>
+    </div>
+  </div>
+</div>

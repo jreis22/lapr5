@@ -1,0 +1,38 @@
+<div fxLayout="row" fxLayoutWrap="wrap">
+    <div fxFlex.gt-sm="100%" fxFlex="100">
+      <mat-card>
+        <mat-card-content>
+          <div style="text-align:left">
+            <h1>Encomendas Efetuadas e Respetivos Estados</h1>
+  <!--
+            <mat-tab-group>
+              <mat-tab label="">
+                <label>Selecionar Encomenda
+                    <mat-select placeholder="Selecione Encomenda" [(ngModel)]="encomendaSelecionada">
+                        <mat-option *ngFor="let encomenda of encomendas" [value]="encomenda">
+                            {{encomenda._id}} : Estado - {{encomenda.estado}}
+                        </mat-option>
+                    </mat-select>
+                </label>
+              </mat-tab>
+            </mat-tab-group>  -->
+
+            <mat-tab-group>
+              <mat-tab label="">
+                <label>
+                  <mat-list>
+                    <a mat-list-item href="encomenda" *ngFor="let encomenda of encomendas">
+                      {{encomenda._id}} : Estado - {{encomenda.estado}}
+                    </a>
+                  </mat-list>
+                </label>
+              </mat-tab>
+            </mat-tab-group>
+  
+            <ng-template #noError>
+            </ng-template>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div> 

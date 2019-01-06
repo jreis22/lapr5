@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+        <meta charset=utf-8>
+        <title>SiC Configurador</title>
+        <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+        <div class="alert" id="alertErro">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                <span id="erro">Erro</span>
+        </div>
+        <div id="sidebar">
+                <div id="configurador">
+                        <div align="center" id="cameraControls">
+                                <img id="imgCamera" src="img/icon-camera.png" width="32" height="32" onclick="resetCamera()"></img>
+                                <span id="resetCamera" onclick="resetCamera()">Reset Camera</span>
+                        </div>
+                         <div align="center" id="lightControls">
+                                <input type="checkbox" id="chkLeftLight" onChange="mudarLuzes()"> Luz esquerda
+                                <input type="checkbox" id="chkRightLight" onChange="mudarLuzes()"> Luz direita
+                                <input type="checkbox" id="chkTopLight" onChange="mudarLuzes()"> Luz topo
+                        </div>                       
+                        <label class="configSection">Dimensões</label>
+                        <div class="row">
+                                <div class="column" align="left">
+                                        <div class="center"><span>Altura:</span> </br></div>
+                                </div>
+                                <div class="column" align="right">
+                                        <input type="number" min="1" max="3" value="2" step="0.1" id="numberAltura" oninput="updateDimensoes()" autocomplete=off></input></br>
+                                </div>
+                        </div>
+                        <div class="row">
+                                <div class="column" align="left">
+                                        <div class="center"><span>Largura:</span> </br></div>
+                                </div>
+                                <div class="column" align="right">
+                                        <input type="number" min="1" max="3" value="1" step="0.1" id="numberLargura" oninput="updateDimensoes()" autocomplete=off></input></br>
+                                </div>
+                        </div>
+                        <div class="row">
+                                <div class="column" align="left">
+                                        <div class="center"><span>Profundidade:</span> </br></div>
+                                </div>
+                                <div class="column" align="right">
+                                        <input type="number" min="0.5" max="1.5" value="0.5" step="0.1" id="numberProfundidade" oninput="updateDimensoes()" autocomplete=off></input></br>
+                                </div>
+                        </div>
+                        <hr>
+                        <label class="configSection">Módulos</label>
+                        <span>Novo módulo:</span> </br>
+                        <div class="select-style" style="width:100%;">
+                                <select id="selectModulo" style="width:100%;"></select>
+                        </div>
+                        <span>Largura:</span></br>
+                        <input type="number" min="0.5" max="3" value="0.5" step="0.1" id="numberLarguraModulo" autocomplete=off></input>
+                        <input type="button" value="Adicionar" onclick="addModulo()"></input>
+                        <input type="button" value=" Remover " onclick="removerModulo()"></input>
+
+                        <hr>
+                        <label class="configSection">Produtos</label>
+                        <span>Nova Parte:</span></br>
+                        <div class="select-style" style="width:100%;">
+                                <select id="selectParte" style="width:100%;"></select>
+                        </div>
+                        <span>Altura:</span></br>
+                        <input type="number" min="0.3" max="3" value="1" step="0.1" id="numberAlturaParte" autocomplete=off></input>
+                        <input type="button" value="Adicionar" onclick="addParte()"></input>
+                        <input type="button" value=" Remover " onclick="removerParte()"></input>
+                        <span>Lista de Módulos:</span> </br>
+                        <div class="select-style" style="width:100%;">
+                                <select id="listaModulos" style="width:100%;" onclick="criarListaProdutos()"></select>
+                        </div>
+                        <span>Lista de Partes:</span> </br>
+                        <div class="select-style" style="width:100%;">
+                                <select id="listaProdutos" style="width:100%;"></select>
+                        </div>
+                        <hr>
+                        <label class="configSection">Aspeto</label>
+                        <span>Material:</span> </br>
+                        <div id="materiais">
+                                <img class="imgMaterial" src="texturas/madeira.jpg" width="32" height=32 onclick="updateMaterial(0)"></img>
+                                <img class="imgMaterial" src="texturas/madeira2.jpg" width="32" height=32 onclick="updateMaterial(1)"></img>
+                                <img class="imgMaterial" src="texturas/madeira3.jpg" width="32" height=32 onclick="updateMaterial(2)"></img>
+                                <img class="imgMaterial" src="texturas/madeira4.jpg" width="32" height=32 onclick="updateMaterial(3)"></img>
+                        </div>
+                        <span>Acabamento:</span> </br></br>
+                        <label class="container"> Polido
+                                <input type="radio" name="acabamento" id="polido" value="0" onclick="updateAcabamento(0)">
+                                <span class="checkmark"></span>
+                        </label>
+                        <label class="container"> Mate
+                                <input type="radio" name="acabamento" id="mate" value="1" onclick="updateAcabamento(1)"
+                                        checked>
+                                <span class="checkmark"></span>
+                        </label>
+                </div>
+        </div>
+        <!--
+        <script src="js/three.js"></script>
+        <script src="js/tween.js"></script>
+        <script src="js/OrbitControls.js"></script>
+        <script src="js/produto.js"></script>
+        <script src="js/modulo.js"></script>
+        <script src="js/armario.js"></script>
+        <script src="js/partes.js"></script>
+        <script src="js/modulos.js"></script>
+        <script src="js/materiais.js"></script>
+        <script src="js/index.js"></script>
+        -->
+
+</body>
+
+</html>

@@ -1,0 +1,256 @@
+<div *ngIf="sicGcErro || sicEncErro">
+    <div id="main">
+        <div class="fof">
+            <h1>Não foi possível aceder ao servidor.</h1>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!sicGcErro && !sicEncErro">
+
+    <mat-tab-group>
+
+        <mat-tab label="Personalizar">
+            <mat-grid-list cols="4" rows="4" rowHeight="1:1">
+                <mat-grid-tile rowspan="3">
+                    <mat-card id="painelConfigurador">
+                        <div class="wrapper">
+                            <mat-vertical-stepper>
+                                <mat-step label="Escolha o seu armário">
+                                    <label>Armários
+                                        <mat-select placeholder="selecione um armário" [(ngModel)]="armarioSelecionado"
+                                            (selectionChange)="onArmarioChange()">
+                                            <mat-option *ngFor="let armario of armarios" [value]="armario">
+                                                {{armario.nome}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </label>
+                                    <mat-form-field *ngIf="armarioSelecionado && armarioSelecionado.altura.tipo == dimensaoContinua">
+                                        <input type="number" [step]="numberStep" [min]="armarioSelecionado.altura.listaValores[0]"
+                                            [max]="armarioSelecionado.altura.listaValores[1]" matInput placeholder="Altura"
+                                            id="numberAltura" (input)="updateDimensoes()" [(ngModel)]="armario.altura"
+                                            required>
+                                    </mat-form-field>
+                                    <mat-form-field *ngIf="armarioSelecionado && armarioSelecionado.altura.tipo == dimensaoDiscreta">
+                                        <mat-select placeholder="Altura" [(ngModel)]="armario.altura" (selectionChange)="updateDimensoes()">
+                                            <mat-option *ngFor="let altura of armarioSelecionado.altura.listaValores"
+                                                [value]="altura">
+                                                {{altura}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-form-field *ngIf="armarioSelecionado && armarioSelecionado.largura.tipo == dimensaoContinua">
+                                        <input type="number" [step]="numberStep" [min]="armarioSelecionado.largura.listaValores[0]"
+                                            [max]="armarioSelecionado.largura.listaValores[1]" matInput placeholder="Largura"
+                                            id="numberLargura" (input)="updateDimensoes()" [(ngModel)]="armario.largura"
+                                            required>
+                                    </mat-form-field>
+                                    <mat-form-field *ngIf="armarioSelecionado && armarioSelecionado.largura.tipo == dimensaoDiscreta">
+                                        <mat-select placeholder="Largura" [(ngModel)]="armario.largura"
+                                            (selectionChange)="updateDimensoes()">
+                                            <mat-option *ngFor="let largura of armarioSelecionado.largura.listaValores"
+                                                [value]="largura">
+                                                {{largura}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-form-field *ngIf="armarioSelecionado && armarioSelecionado.profundidade.tipo == dimensaoContinua">
+                                        <input type="number" [step]="numberStep" [min]="armarioSelecionado.profundidade.listaValores[0]"
+                                            [max]="armarioSelecionado.profundidade.listaValores[1]" matInput
+                                            placeholder="Profundidade" id="numberProfundidade" (input)="updateDimensoes()"
+                                            [(ngModel)]="armario.profundidade" required>
+                                    </mat-form-field>
+                                    <mat-form-field *ngIf="armarioSelecionado && armarioSelecionado.profundidade.tipo == dimensaoDiscreta">
+                                        <mat-select placeholder="Profundidade" [(ngModel)]="armario.profundidade"
+                                            (selectionChange)="updateDimensoes()">
+                                            <mat-option *ngFor="let profundidade of armarioSelecionado.profundidade.listaValores"
+                                                [value]="profundidade">
+                                                {{profundidade}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <label>Material
+                                        <mat-select placeholder="selecione um material" [(ngModel)]="materialArmarioSelecionado"
+                                            (selectionChange)="onMaterialArmarioChange()">
+                                            <mat-option *ngFor="let material of materiaisArmarioSelecionado" [value]="material">
+                                                {{material.tipo}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </label>
+                                    <label>Acabamento
+                                        <mat-select placeholder="selecione um acabamento" [(ngModel)]="acabamentoMaterialArmarioSelecionado"
+                                            (selectionChange)="onAcabamentoArmarioChange()">
+                                            <mat-option *ngFor="let acabamento of acabamentosMaterialArmarioSelecionado"
+                                                [value]="acabamento">
+                                                {{acabamento.tipo}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </label>
+                                </mat-step>
+
+                                <mat-step label="Adicione módulos">
+                                    <label>Módulos
+                                        <mat-select #modulos placeholder="selecione um módulo" [(ngModel)]="moduloSelecionado"
+                                            (selectionChange)="onModuloChange()">
+                                            <mat-option *ngFor="let modulo of modulosArmarioSelecionado" [value]="modulo">
+                                                {{modulo.nome}}
+                                            </mat-option>
+                                        </mat-select>
+                                        <mat-form-field *ngIf="moduloSelecionado && moduloSelecionado.largura.tipo == dimensaoContinua">
+                                            <input type="number" [step]="numberStep" [min]="moduloSelecionado.largura.listaValores[0]"
+                                                [max]="moduloSelecionado.largura.listaValores[1]" matInput placeholder="Largura"
+                                                [(ngModel)]="larguraModulo" required>
+                                        </mat-form-field>
+                                        <mat-form-field *ngIf="moduloSelecionado && moduloSelecionado.largura.tipo == dimensaoDiscreta">
+                                            <mat-select placeholder="Largura" [(ngModel)]="larguraModulo">
+                                                <mat-option *ngFor="let largura of moduloSelecionado.largura.listaValores"
+                                                    [value]="largura">
+                                                    {{largura}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </label>
+                                    <!--
+                                    <label>Material
+                                        <mat-select placeholder="selecione um material" [(ngModel)]="materialModuloSelecionado" (selectionChange)="onMaterialModuloChange()">
+                                            <mat-option *ngFor="let material of materiaisModuloSelecionado" [value]="material">
+                                                {{material.tipo}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </label>
+                                    <label>Acabamento
+                                        <mat-select placeholder="selecione um acabamento" [(ngModel)]="acabamentoMaterialModuloSelecionado">
+                                            <mat-option *ngFor="let acabamento of acabamentosMaterialModuloSelecionado" [value]="acabamento">
+                                                {{acabamento.tipo}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </label>
+                                -->
+                                    <label>Módulos adicionados
+                                        <mat-select placeholder="selecione um módulo" [(ngModel)]="moduloAdicionadoSelecionadoEditar">
+                                            <mat-option *ngFor="let modulo of modulosAdicionados; index as i" [value]="i">
+                                                {{moduloById(modulo.idProduto).nome}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </label>
+                                    <button mat-button (click)="addModulo(modulos.value)">+</button>
+                                    <button mat-button (click)="removeModulo()">-</button>
+                                </mat-step>
+
+                                <mat-step label="Personalize os módulos">
+                                    <label>Módulos adicionados
+                                        <mat-select placeholder="selecione um módulo" [(ngModel)]="moduloAdicionadoSelecionado">
+                                            <mat-option *ngFor="let modulo of modulosAdicionados; index as i" [value]="i">
+                                                {{moduloById(modulo.idProduto).nome}}
+                                            </mat-option>
+                                        </mat-select>
+                                        <mat-form-field *ngIf="moduloAdicionadoSelecionado != null">
+                                            <input type="number" [step]="numberStep" matInput placeholder="Largura"
+                                                [readonly]="!canEditModulo" [(ngModel)]="modulosAdicionados[moduloAdicionadoSelecionado].largura"
+                                                (input)="onModuloAdicionadoSelecionadoLarguraChange()" required>
+                                        </mat-form-field>
+                                    </label>
+                                    <label>Partes
+                                        <mat-select #partes placeholder="selecione uma parte" [(ngModel)]="parteSelecionada"
+                                            (selectionChange)="onParteChange()">
+                                            <mat-option *ngFor="let parte of partesModuloSelecionado" [value]="parte">
+                                                {{parte.nome}}
+                                            </mat-option>
+                                        </mat-select>
+                                        <mat-form-field *ngIf="parteSelecionada && parteSelecionada.altura.tipo == dimensaoContinua">
+                                            <input type="number" [step]="numberStep" [min]="parteSelecionada.altura.listaValores[0]"
+                                                [max]="parteSelecionada.altura.listaValores[1]" matInput placeholder="Altura"
+                                                [(ngModel)]="alturaParte" required>
+                                        </mat-form-field>
+                                        <mat-form-field *ngIf="parteSelecionada && parteSelecionada.altura.tipo == dimensaoDiscreta">
+                                            <mat-select placeholder="Altura" [(ngModel)]="alturaParte">
+                                                <mat-option *ngFor="let altura of parteSelecionada.altura.listaValores"
+                                                    [value]="altura">
+                                                    {{altura}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <mat-form-field *ngIf="parteSelecionada && parteSelecionada.largura.tipo == dimensaoContinua">
+                                            <input type="number" [step]="numberStep" [min]="parteSelecionada.largura.listaValores[0]"
+                                                [max]="parteSelecionada.largura.listaValores[1]" matInput placeholder="Largura"
+                                                [(ngModel)]="larguraParte" required>
+                                        </mat-form-field>
+                                        <mat-form-field *ngIf="parteSelecionada && parteSelecionada.largura.tipo == dimensaoDiscreta">
+                                            <mat-select placeholder="Largura" [(ngModel)]="larguraParte">
+                                                <mat-option *ngFor="let largura of parteSelecionada.largura.listaValores"
+                                                    [value]="largura">
+                                                    {{largura}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+
+                                        <mat-form-field *ngIf="parteSelecionada && parteSelecionada.profundidade.tipo == dimensaoContinua">
+                                            <input type="number" [step]="numberStep" [min]="parteSelecionada.profundidade.listaValores[0]"
+                                                [max]="parteSelecionada.profundidade.listaValores[1]" matInput
+                                                placeholder="Profundidade" [(ngModel)]="profundidadeParte" required>
+                                        </mat-form-field>
+                                        <mat-form-field *ngIf="parteSelecionada && parteSelecionada.profundidade.tipo == dimensaoDiscreta">
+                                            <mat-select placeholder="Profundidade" [(ngModel)]="profundidadeParte">
+                                                <mat-option *ngFor="let profundidade of parteSelecionada.profundidade.listaValores"
+                                                    [value]="profundidade">
+                                                    {{profundidade}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </label>
+                                    <label>Material
+                                        <mat-select placeholder="selecione um material" [(ngModel)]="materialParteSelecionada"
+                                            (selectionChange)="onMaterialParteChange()">
+                                            <mat-option *ngFor="let material of materiaisParteSelecionada" [value]="material">
+                                                {{material.tipo}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </label>
+                                    <label>Acabamento
+                                        <mat-select placeholder="selecione um acabamento" [(ngModel)]="acabamentoMaterialParteSelecionada">
+                                            <mat-option *ngFor="let acabamento of acabamentosMaterialParteSelecionada"
+                                                [value]="acabamento">
+                                                {{acabamento.tipo}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </label>
+                                    <label *ngIf="moduloAdicionadoSelecionado != null">Partes adicionadas
+                                        <mat-select placeholder="selecione uma parte" [(ngModel)]="parteAdicionadaSelecionada">
+                                            <mat-option *ngFor="let parte of modulosAdicionados[moduloAdicionadoSelecionado].filhos; index as i"
+                                                [value]="i">
+                                                {{parteById(parte.idProduto).nome}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </label>
+                                    <button mat-button (click)="addParte(partes.value)">+</button>
+                                    <button mat-button (click)="removeParte()">-</button><br />
+                                </mat-step>
+                            </mat-vertical-stepper>
+
+                        </div>
+                    </mat-card>
+                </mat-grid-tile>
+                <mat-grid-tile colspan="3" rowspan="3" id="canvasTile">
+                    <div #rendererContainer id="rendererContainer"></div>
+                </mat-grid-tile>
+
+            </mat-grid-list>
+        </mat-tab>
+
+        <mat-tab label="Encomendar">
+            <label>Cidade de entrega
+                <mat-select placeholder="Cidade de entrega" [(ngModel)]="cidadeEntrega">
+                    <mat-option *ngFor="let cidade of cidades" [value]="cidade">
+                        {{cidade}}
+                    </mat-option>
+                </mat-select>
+            </label>
+            <button mat-button (click)="finalizarEncomenda()" *ngIf="isLoggedIn">Finalizar encomenda</button>
+        </mat-tab>
+
+    </mat-tab-group>
+
+</div>

@@ -1,0 +1,293 @@
+<div *ngIf="!flagServer">
+  <div fxLayout="row" fxLayoutWrap="wrap">
+    <div fxFlex.gt-sm="100%" fxFlex="100">
+      <!-- CRIAR UM MATERIAL -->
+      <mat-card>
+        <mat-card-content>
+          <mat-card-title> Criar um material </mat-card-title>
+          <mat-card-subtitle> Por favor escolha as opções disponíveis para criar um material (nome é obrigatório).
+            Todas as outras opções permitem criar materiais com diferentes texturas e uma lista de acabamentos.
+            Caso não sejam indicadas opções e apenas o nome, o material será criado com valores padrão.</mat-card-subtitle>
+  
+          <mat-grid-list cols="3" fxLayoutWrap="wrap" rowHeight="60px">
+            <!-- escrever um nome -->
+            <mat-grid-tile [colspan]="1" [rowspan]="1">
+              <form class="form-nome" [formGroup]="criarFormGroup">
+                <mat-form-field appearance="outline">
+                  <input matInput placeholder="{{materialFormCriar}}" formControlName="criarMaterialCtrl" required>
+                </mat-form-field>
+              </form>
+            </mat-grid-tile>
+            <!-- selecionar textura -->
+            <mat-grid-tile [colspan]="1" [rowspan]="2">
+              <div class="form-nome" *ngIf="selectedTexturaCriar==null">
+                Ficheiro adicionado (Textura):
+                <p>
+                  [nenhuma textura]
+                </p>
+              </div>
+              <div class="form-nome" *ngIf="selectedTexturaCriar!=null">
+                Ficheiro adicionado (Textura):
+                <p>
+                  [{{selectedTexturaCriar.name}}]
+                </p>
+              </div>
+            </mat-grid-tile>
+            <!-- selecionar acabamento -->
+            <mat-grid-tile [colspan]="1" [rowspan]="2">
+              <div class="form-nome" [formGroup]="incrementoFormGroup">
+                <p class="button-center">
+                  <button *ngIf="disabledAcabamentosList==false" mat-raised-button style="column-width: 100%"
+                    [matMenuTriggerFor]="acabamentosCriar"> Selecione o(s) acabamento(s)</button>
+                </p>
+                <mat-menu #acabamentosCriar="matMenu">
+                  <div mat-menu-item class="my-btn" *ngFor="let acabamento of acabamentosList; let i = index;">
+                    <mat-grid-list cols="3" rowHeight="1.8:1">
+                      <mat-grid-tile class="grid-tile" [colspan]="2" [rowspan]="1">
+                        <mat-checkbox class="chkbox" (click)="$event.stopPropagation();" [(ngModel)]="acabamentosListSelectedCriar[i]"
+                          [ngModelOptions]="{standalone: true}">
+                          {{i+1}} : {{acabamento.tipo}}</mat-checkbox>
+                      </mat-grid-tile>
+                      <mat-grid-tile [colspan]="1" [rowspan]="1">
+                        <mat-form-field class="right-align-acabamento">
+                          <input matInput type="number" min="0" step="0.50" placeholder="{{precoFormIncremento}}"
+                            (click)="$event.stopPropagation();" formControlName="incrementoPrecoCtrl" (change)="initializePrecoList(i)">
+                            <mat-icon class="icon-width" matSuffix>euro_symbol</mat-icon>
+                        </mat-form-field>
+                      </mat-grid-tile>
+                    </mat-grid-list>
+                  </div>
+                </mat-menu>
+              </div>
+            </mat-grid-tile>
+            <!-- escrever um preço -->
+            <mat-grid-tile [colspan]="1" [rowspan]="1">
+              <form class="form-nome" [formGroup]="criarFormGroup">
+                <mat-form-field appearance="outline">
+                  <input matInput type="number" min="0" step="0.50" placeholder="{{precoFormCriar}}" formControlName="criarPrecoCtrl"
+                    required>
+                  <mat-icon matSuffix>euro_symbol</mat-icon>
+                </mat-form-field>
+              </form>
+            </mat-grid-tile>
+          </mat-grid-list>
+  
+          <input type="file" #fileCriar style="display: none" accept="image/x-png,image/jpeg" (click)="fileCriar.value = null"
+            value="" (change)="uploadCancelButton($event)" />
+          <p class="button-center">
+            <span class="button-padding">
+              <button [disabled]="!maxfiles" mat-raised-button color="warn" (click)="removerTexturaButton()">
+                Remover textura
+              </button>
+            </span>
+            <span class="button-padding">
+              <button [disabled]="maxfiles" mat-raised-button color="basic" (click)="importarTexturaButton()">
+                Importar textura
+              </button>
+            </span>
+            <span class="button-padding">
+              <button [disabled]="disableBotaoCriar" mat-raised-button color="primary" (click)="botaoCriarEvent()">
+                Criar
+              </button>
+            </span>
+          </p>
+  
+        </mat-card-content>
+      </mat-card>
+  
+      <!-- EDITAR UM MATERIAL -->
+      <mat-card>
+        <mat-card-content>
+          <mat-card-title> Editar um material </mat-card-title>
+          <mat-card-subtitle> Por favor escolha um material da lista para poder editar. Se não existirem materiais
+            disponíveis, crie um material na opção acima.</mat-card-subtitle>
+          <mat-grid-list cols="4" fxLayoutWrap="wrap" rowHeight="60px">
+            <!-- escolher um material -->
+            <mat-grid-tile [colspan]="1" [rowspan]="2">
+              <div class="form-nome">
+                <mat-form-field *ngIf="disabledMateriaisList==false">
+                  <mat-select placeholder="{{materialTextEditar}}">
+                    <mat-option *ngFor="let material of materiaisList" (click)="materialEditarEvent(material)">
+                      {{material.tipo}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <label *ngIf="disabledMateriaisList==true">
+                  [Não existem materiais!]
+                </label>
+              </div>
+            </mat-grid-tile>
+            <!-- selecionar textura -->
+            <mat-grid-tile [colspan]="1" [rowspan]="2">
+              <div class="form-nome" *ngIf="selectedTexturaEditar==null">
+                Textura:
+                <p>
+                  [nenhuma textura]
+                </p>
+              </div>
+              <div class="form-nome" *ngIf="selectedTexturaEditar!=null">
+                <span *ngIf="!newFile">
+                  <img class="image-compressed" src="data:image/png;base64,{{selectedTexturaEditar}}">
+                </span>
+                <span *ngIf="newFile">
+                  Nova textura:
+                  <p>
+                    [{{selectedTexturaEditar.name}}]
+                  </p>
+                </span>
+              </div>
+            </mat-grid-tile>
+            <!-- editar os acabamentos -->
+            <mat-grid-tile [colspan]="1" [rowspan]="2">
+              <div class="form-nome">
+                <p class="button-center">
+                  <button [disabled]="disableEditar" *ngIf="disabledAcabamentosList==false" mat-raised-button style="column-width: 100%"
+                    [matMenuTriggerFor]="acabamentosEditar"> Edite o(s) acabamento(s)</button>
+                </p>
+                <mat-menu #acabamentosEditar="matMenu">
+                  <div mat-menu-item class="my-btn" *ngFor="let acabamento of acabamentosList; let i = index;">
+                    <mat-grid-list cols="3" rowHeight="1.8:1">
+                      <mat-grid-tile class="grid-tile" [colspan]="2" [rowspan]="1">
+                        <mat-checkbox class="chkbox" (click)="$event.stopPropagation();" [(ngModel)]="acabamentosListSelectedEditar[i]"
+                          [ngModelOptions]="{standalone: true}">
+                          {{i+1}} : {{acabamento.tipo}}</mat-checkbox>
+                      </mat-grid-tile>
+                      <mat-grid-tile [colspan]="1" [rowspan]="1">
+                        <mat-form-field class="right-align-acabamento">
+                          <input matInput type="number" min="0" step="0.50" placeholder="{{precoFormIncremento}}"
+                            (click)="$event.stopPropagation();"  [(ngModel)]="precosListSelectedEditar[i]">
+                            <mat-icon class="icon-width" matSuffix>euro_symbol</mat-icon>
+                        </mat-form-field>
+                      </mat-grid-tile>
+                    </mat-grid-list>
+                  </div>
+                </mat-menu>
+  
+                <label *ngIf="disabledAcabamentosList==true">
+                  [Não existem acabamentos!]
+                </label>
+              </div>
+            </mat-grid-tile>
+            <!-- escrever um nome -->
+            <mat-grid-tile [colspan]="1" [rowspan]="1">
+              <form class="form-nome" [formGroup]="editarFormGroup" *ngIf="selectedMaterialEditar==null">
+                <mat-form-field appearance="outline">
+                  <input matInput placeholder="{{materialFormEditar}}" formControlName="editarNomeCtrl" required>
+                </mat-form-field>
+              </form>
+              <form class="form-nome" [formGroup]="editarFormGroup" *ngIf="selectedMaterialEditar!=null">
+                <mat-form-field appearance="outline">
+                  <input matInput placeholder="{{materialFormEditar}}" value="{{selectedMaterialEditar.tipo}}"
+                    formControlName="editarNomeCtrl" required>
+                </mat-form-field>
+              </form>
+            </mat-grid-tile>
+            <!-- escrever um preço -->
+            <mat-grid-tile [colspan]="1" [rowspan]="1">
+              <form class="form-nome" [formGroup]="editarFormGroup" *ngIf="selectedMaterialEditar==null">
+                <mat-form-field appearance="outline">
+                  <input matInput type="number" min="0" step="0.50" placeholder="{{precoFormCriar}}" formControlName="editarPrecoCtrl"
+                    required>
+                  <mat-icon matSuffix>euro_symbol</mat-icon>
+                </mat-form-field>
+              </form>
+              <form class="form-nome" [formGroup]="editarFormGroup" *ngIf="selectedMaterialEditar!=null">
+                <mat-form-field appearance="outline">
+                  <input matInput type="number" min="0" step="0.05" placeholder="{{precoFormCriar}}" value="{{selectedMaterialEditar.precoBase}}"
+                    formControlName="editarPrecoCtrl" required>
+                  <mat-icon matSuffix>euro_symbol</mat-icon>
+                </mat-form-field>
+              </form>
+            </mat-grid-tile>
+          </mat-grid-list>
+  
+          <input type="file" #fileEditar style="display: none" accept="image/x-png,image/jpeg" (change)="uploadCancelButton2($event)" />
+          <p class="button-center">
+            <span class="button-padding">
+              <button [disabled]="disableEditar" mat-raised-button color="basic" (click)="importarEditarTexturaButton()">
+                Editar textura
+              </button>
+            </span>
+            <span class="button-padding">
+              <button [disabled]="disableEditar" mat-raised-button color="primary" (click)="botaoEditarEvent()">Editar</button>
+            </span>
+          </p>
+        </mat-card-content>
+      </mat-card>
+  
+      <!-- ELIMINAR UM MATERIAL -->
+      <div fxLayout="row">
+        <div fxFlex.gt-sm="50%">
+          <mat-card>
+            <mat-card-content>
+              <mat-card-title> Eliminar um material </mat-card-title>
+              <mat-card-subtitle> Por favor escolha um material da lista abaixo para ser eiminado. </mat-card-subtitle>
+              <mat-form-field *ngIf="disabledMateriaisList==false">
+                <mat-select placeholder="{{materialTextEliminar}}">
+                  <mat-option *ngFor="let material of materiaisList" (click)="materialEliminarEvent(material)">
+                    {{material.tipo}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <label *ngIf="disabledMateriaisList==true">
+                [Não existem materiais!]
+              </label>
+  
+              <p class="button-center">
+                <button [disabled]="disableEliminar" mat-raised-button color="primary" (click)="botaoEliminarEvent()">Eliminar</button>
+              </p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+  
+        <!-- LISTAR MATERIAIS -->
+        <div fxFlex.gt-sm="50%">
+          <mat-card>
+            <mat-card-content>
+              <mat-card-title> Listar materiais </mat-card-title>
+              <mat-card-subtitle> Listagem de todos os materiais existentes/disponíveis e todas as suas características.
+              </mat-card-subtitle>
+              <p class="button-center">
+                <button *ngIf="disabledMateriaisList==false" mat-raised-button style="column-width: 100%"
+                  [matMenuTriggerFor]="materiais">Clique aqui para ver a listagem
+                  de materiais</button>
+              </p>
+              <mat-menu #materiais="matMenu">
+                <button mat-menu-item [matMenuTriggerFor]="materialDescription" *ngFor="let material of materiaisList; let i = index;"
+                  (mouseenter)="materialListarEvent(material)">
+                  {{i+1}} : {{material.tipo}}
+                  <mat-menu #materialDescription="matMenu">
+                    <img class="image-padding-left" src="data:image/png;base64,{{material.textura}}">
+                    <mat-divider></mat-divider>
+                    <label class="preco-padding">
+                      <font size="5" style="color:#000000">
+                        Preço: {{material.precoBase}} €
+                      </font>
+                    </label>
+                    <mat-divider *ngIf="listarMaterialAcabamentosList.length != 0"></mat-divider>
+                    <mat-list *ngFor="let acabamento of listarMaterialAcabamentosList; let j = index;">
+                      <mat-list-item>
+                        {{j+1}} : {{acabamento.tipo}}
+                      </mat-list-item>
+                    </mat-list>
+                  </mat-menu>
+                </button>
+              </mat-menu>
+  
+              <label *ngIf="disabledMateriaisList==true">
+                [Não existem materiais!]
+              </label>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="flagServer">
+  <div id="main">
+    <div class="fof">
+      <h1>Não foi possível aceder ao servidor.</h1>
+    </div>
+  </div>
+</div>

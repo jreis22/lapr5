@@ -1,0 +1,99 @@
+.image-padding-left {
+    padding-left: 1em;
+    height: 128px;
+    width: 100%;
+    padding-right: 1em;
+}
+
+.image-compressed {
+    height: 50%;
+    width: 100%;
+}
+
+.button-center {
+    text-align: center;
+}
+
+.button-padding {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.form-nome {
+    width: 75%;
+    text-align: center;
+}
+
+.chkbox {
+    padding-right: 1em;
+}
+
+.mat-form-field.mat{
+    width: 120px;
+    height: 6px;
+    float: right;
+    text-align: left;
+}
+
+.align-text {
+    padding-left: 1em;
+    text-align: left;
+}
+
+.mat-divider.style-fix {
+    height: 36px;
+}
+
+.preco-padding {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+#main{
+    display: table;
+    width: 100%;
+    height: 100vh;
+    text-align: center;
+}
+
+.fof{
+	  display: table-cell;
+	  vertical-align: middle;
+}
+
+.fof h1{
+	  font-size: 50px;
+	  display: inline-block;
+	  padding-right: 12px;
+	  animation: type .5s alternate infinite;
+}
+
+.right-align-acabamento{
+    text-align: right;
+    width: 100%;
+    padding-right: 1em;
+    padding-left: 1em;
+}
+
+.my-btn{
+    min-width: 280px;
+    padding: 0;
+    align-items: left;
+    justify-content: left;
+}
+
+.grid-tile.mat-figure{
+    justify-content: left!important;
+    overflow: overlay;
+    height: 100%
+}
+
+.icon-width{
+    max-width: 0;
+}
+
+@keyframes type{
+	  from{box-shadow: inset -3px 0px 0px #888;}
+	  to{box-shadow: inset -3px 0px 0px transparent;}
+}
+

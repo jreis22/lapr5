@@ -1,0 +1,101 @@
+<div *ngIf="!flagServer">
+  <div fxLayout="row" fxLayoutWrap="wrap">
+    <div fxFlex.gt-sm="100%" fxFlex="100">
+      <mat-card>
+        <mat-card-content>
+          <div style="text-align:left">
+            <h1>Gestão de Categorias</h1>
+            <mat-tab-group>
+              <mat-tab label="Criar Categoria">
+                <div *ngIf="flag" style="text-align: left">
+                  <h2>Criar Categoria</h2>
+                  <mat-form-field>
+                    <input matInput placeholder="Descrição Categoria" autocomplete="off" #categoriaDescricaoUpdate>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-select [(value)]="selected" placeholder="Categoria Pai" #selectCategoriaCriar>
+                      <mat-option [value]="0">Sem Categoria Pai</mat-option>
+                      <mat-option *ngFor="let cat of allCategorias" [value]="cat.id">
+                        ID: {{cat.id}} - {{cat.descricao}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <p></p>
+                  <div style="text-align:left">
+                    <nav>
+                      <button mat-raised-button color="primary" (click)="addCategoriaHTML(categoriaDescricaoUpdate.value,selectCategoriaCriar.value);categoriaDescricaoUpdate.value=''">Criar</button>
+                    </nav>
+                  </div>
+                </div>
+              </mat-tab>
+
+              <mat-tab label="Editar Categoria">
+                <div *ngIf="flag" style="text-align: left">
+                  <h2>Selecione a Categoria</h2>
+                  <mat-form-field>
+                    <mat-select placeholder="Categoria Selecionada" [(ngModel)]="selectedCategoria">
+                      <mat-option *ngFor="let cat of allCategorias" [value]="cat" (click)="selecionarCategoria(cat)">
+                        ID: {{cat.id}} - {{cat.descricao}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <h2>Editar Categoria</h2>
+                  <p></p>
+                  <mat-form-field>
+                    <input matInput placeholder="Nova Descrição" autocomplete="off" [(ngModel)]="categoriaDescricaoUpdate">
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-select placeholder="Categoria Pai" [(ngModel)]="selectedCategoriaPaiId">
+                      <mat-option [value]="0">Sem Categoria Pai</mat-option>
+                      <mat-option *ngFor="let cat of allCategorias" [value]="cat.id">
+                        ID: {{cat.id}} - {{cat.descricao}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <p></p>
+                  <div style="text-align:left">
+                    <nav>
+                      <button mat-raised-button color="primary" (click)="updateCategoriaHTML()">Editar</button>
+                      <button mat-raised-button color="warn" (click)="deleteCategoria()">Eliminar</button>
+                    </nav>
+                  </div>
+                </div>
+              </mat-tab>
+
+              <mat-tab label="Listar Categorias">
+                <div *ngIf="flag" style="text-align: left">
+                  <h2>Listar Categorias</h2>
+                  <mat-form-field>
+                    <mat-select placeholder="Lista de Categorias">
+                      <mat-option *ngFor="let cat of allCategorias" id="{{cat.id}}" value="">
+                        ID: {{cat.id}} - Descrição: {{cat.descricao}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+              </mat-tab>
+            </mat-tab-group>
+
+
+
+            <ng-template #noError>
+
+
+
+
+
+            </ng-template>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+<div *ngIf="flagServer">
+  <div id="main">
+    <div class="fof">
+      <h1>Não foi possível aceder ao servidor.</h1>
+    </div>
+  </div>
+</div>

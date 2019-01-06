@@ -1,0 +1,146 @@
+<div *ngIf="!flagServer">
+  <div fxLayout="row" fxLayoutWrap="wrap">
+    <div fxFlex.gt-sm="100%" fxFlex="100">
+      <mat-card>
+        <mat-card-content>
+          <div style="text-align:left">
+            <h1>Gestão de Catálogos</h1>
+            <mat-tab-group (focusChange)="clear()">
+
+              <mat-tab label="Criar Catálogo">
+                <div style="text-align: left">
+                  <h2>Criar Novo Catálogo</h2>
+                  <mat-form-field>
+                    <input matInput placeholder="Nome Catálogo" autocomplete="off" [(ngModel)]="nomeCatalogo">
+                  </mat-form-field>
+                  <button mat-raised-button color="primary" (click)="addCatalogo()">Criar</button>
+
+                  <p></p>
+                  <h2>Selecionar Produtos</h2>
+                  <mat-form-field>
+                    <mat-select placeholder="Selecionar" [(ngModel)]="selectedProd">
+                      <mat-option *ngFor="let prod of allProdutos" [value]="prod" (click)="selectProduto(prod)">
+                        {{prod.nome}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div style="text-align:left">
+                    <nav>
+                      <button mat-raised-button color="warn" (click)="addProduto()">Adicionar produto</button>
+                    </nav>
+                  </div>
+                </div>
+              </mat-tab>
+
+              <mat-tab label="Editar Catálogo">
+                <div style="text-align: left">
+                  <h2>Selecione um Catálogo</h2>
+                  <mat-form-field>
+                    <mat-select placeholder="Selecionar" [(ngModel)]="selectedCatalogo">
+                      <mat-option *ngFor="let cat of allCatalogos" [value]="cat" (click)="selecionarCatalogo(cat)">
+                        {{cat.nome}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <h2>Editar Catálogo</h2>
+                  <p></p>
+                  <mat-form-field>
+                    <input matInput placeholder="Novo Nome" [(ngModel)]="nomeUpdate">
+                  </mat-form-field>
+                  <p></p>
+                  <div style="text-align:left">
+                    <nav>
+                      <button mat-raised-button color="primary" (click)="updateCatalogoHTML()">Editar</button>
+                      <button mat-raised-button color="warn" (click)="deleteCatalogo()">Eliminar</button>
+                    </nav>
+                  </div>
+                </div>
+                <div fxLayout="row">
+                  <div fxFlex.gt-sm="100%">
+                    <mat-card>
+                      <mat-card-content>
+                        <mat-card-title> Eliminar um produto </mat-card-title>
+                        <mat-card-subtitle> Por favor escolha um produto da lista abaixo para ser eliminado.
+                        </mat-card-subtitle>
+                        <mat-form-field *ngIf="disabledProdutosList==false">
+                          <mat-select placeholder="{{produtoTextEliminar}}" [(ngModel)]="selectedProduto">
+                            <mat-option *ngFor="let prod of produtosCatalogo" [value]="prod" (click)="selecionarProduto(prod)">
+                              {{prod.nome}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <label *ngIf="disabledProdutosList==true">
+                          Não existem produtos!
+                        </label>
+
+                        <p class="button-center">
+                          <button mat-raised-button color="warn" (click)="deleteProduto()">Eliminar</button>
+                        </p>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+
+                <div fxLayout="row">
+                  <div fxFlex.gt-sm="100%">
+                    <mat-card>
+                      <mat-card-content>
+                        <mat-card-title> Adicionar um produto </mat-card-title>
+                        <mat-card-subtitle> Por favor escolha um produto da lista abaixo para ser adicionado.
+                        </mat-card-subtitle>
+                        <mat-form-field *ngIf="disabledProdutosList==false">
+                          <mat-select placeholder="{{produtoTextAdicionar}}" [(ngModel)]="selectedProduto">
+                            <mat-option *ngFor="let prod of allProdutos" [value]="prod" (click)="selecionarProduto(prod)">
+                              {{prod.nome}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <label *ngIf="disabledProdutosList==true">
+                          Não existem produtos!
+                        </label>
+
+                        <p class="button-center">
+                          <button mat-raised-button color="primary" (click)="adicionarProduto()">Adicionar</button>
+                        </p>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+              </mat-tab>
+
+              <mat-tab label="Listar Catálogos">
+                <div style="text-align: left">
+                  <h2>Listar Catálogos</h2>
+                  <mat-form-field>
+                    <mat-select placeholder="Lista de Catálogos" [(ngModel)]="selectedCatalogo">
+                      <mat-option *ngFor="let cat of allCatalogos" [value]="cat" (click)="selecionarCatalogo(cat)">
+                        {{cat.nome}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <h3>Produtos do Catálogo:</h3>
+                  <mat-list>
+                    <mat-list-item *ngFor="let prod of produtosCatalogo">
+                      <h3>{{prod.nome}}</h3>
+                    </mat-list-item>
+                  </mat-list>
+                </div>
+              </mat-tab>
+
+            </mat-tab-group>
+            <ng-template #noError>
+            </ng-template>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+</div>
+<div *ngIf="flagServer">
+  <div id="main">
+    <div class="fof">
+      <h1>Não foi possível aceder ao servidor.</h1>
+    </div>
+  </div>
+</div>

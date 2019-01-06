@@ -1,0 +1,456 @@
+<div *ngIf="!flagServer">
+  <mat-card>
+    <mat-card-content>
+      <div style="text-align:left">
+        <mat-card-title>Gestão de Produtos</mat-card-title>
+        <mat-tab-group (focusChange)="clearVariaveis()">
+
+          <mat-tab label="Criar Produto">
+            <div *ngIf="criarProduto" style="text-align:left">
+              <p></p>
+              <div class="esquerda">
+                <mat-form-field>
+                  <input matInput placeholder="Nome Produto" autocomplete="off" [(ngModel)]="nomeProduto">
+                </mat-form-field>
+              </div>
+              <div class="esquerdaComPadding">
+                <mat-form-field>
+                  <mat-select placeholder="Tipo de Produto" [(ngModel)]="selectedTipoProduto">
+                    <mat-option *ngFor="let tipo of listaTiposProduto ; let i = index" [value]="i">
+                      {{tipo}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="esquerdaComPadding">
+                <mat-form-field>
+                  <mat-select placeholder="Categoria" [(ngModel)]="selectedCategoria">
+                    <mat-option *ngFor="let cat of allCategorias ; let i=index" [value]="i">
+                      ID: {{cat.id}} - {{cat.descricao}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="esquerda">
+                <mat-form-field>
+                  <mat-select placeholder="Materiais" [(ngModel)]="selectedMaterialExistente">
+                    <mat-option *ngFor="let mat of allMateriais ; let i = index" [value]="i">
+                      {{mat.tipo}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="direita">
+                <button mat-raised-button color="primary" (click)="addMaterialCreate()">Adicionar</button>
+              </div>
+
+              <div class="esquerda">
+                <mat-form-field>
+                  <mat-select placeholder="Materiais do Produto" [(ngModel)]="selectedMaterialDoProduto">
+                    <mat-option *ngFor="let mat of materiaisDoProduto ; let i = index" [value]="i">
+                      {{mat.tipo}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="direita">
+                <button mat-raised-button color="warn" (click)="removeMaterialCreate()">Remover</button>
+              </div>
+
+
+
+              <div class="tipoValores">
+                <label>Tipo de Valores: </label>
+                <mat-radio-group [(ngModel)]="tipoValor1">
+                  <mat-radio-button [value]="0" (change)="clearValoresAltura()">Discretos</mat-radio-button>
+                  <mat-radio-button [value]="1" (change)="clearValoresAltura()">Continuos</mat-radio-button>
+                </mat-radio-group>
+              </div>
+              <div>
+                <div class="esquerda">
+                  <mat-form-field>
+                    <input matInput placeholder="Altura" autocomplete="off" [(ngModel)]="campoAltura">
+                  </mat-form-field>
+                </div>
+                <div class="direita">
+                  <button mat-raised-button color="primary" (click)="addValor1()">Adicionar</button>
+                </div>
+                <div class="esquerda">
+                  <mat-form-field>
+                    <mat-select placeholder="Alturas" [(ngModel)]="valorAlturaSelecionado">
+                      <mat-option *ngFor="let num of valoresAltura" [value]="num">
+                        {{num}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="direita">
+                  <button mat-raised-button color="warn" (click)="removeValor1()">Remover</button>
+                </div>
+              </div>
+
+              <div class="tipoValores">
+                <label>Tipo de Valores: </label>
+                <mat-radio-group [(ngModel)]="tipoValor2">
+                  <mat-radio-button [value]="0" (change)="clearValoresLargura()">Discretos</mat-radio-button>
+                  <mat-radio-button [value]="1" (change)="clearValoresLargura()">Continuos</mat-radio-button>
+                </mat-radio-group>
+              </div>
+              <div>
+                <div class="esquerda">
+                  <mat-form-field>
+                    <input matInput placeholder="Largura" autocomplete="off" [(ngModel)]="campoLargura">
+                  </mat-form-field>
+                </div>
+                <div class="direita">
+                  <button mat-raised-button color="primary" (click)="addValor2()">Adicionar</button>
+                </div>
+                <div class="esquerda">
+                  <mat-form-field>
+                    <mat-select placeholder="Larguras" [(ngModel)]="valorLarguraSelecionado">
+                      <mat-option *ngFor="let num of valoresLargura" [value]="num">
+                        {{num}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="direita">
+                  <button mat-raised-button color="warn" (click)="removeValor2()">Remover</button>
+                </div>
+              </div>
+
+              <div class="tipoValores">
+                <label>Tipo de Valores: </label>
+                <mat-radio-group [(ngModel)]="tipoValor3">
+                  <mat-radio-button [value]="0" (change)="clearValoresProfundidade()">Discretos</mat-radio-button>
+                  <mat-radio-button [value]="1" (change)="clearValoresProfundidade()">Continuos</mat-radio-button>
+                </mat-radio-group>
+              </div>
+              <div>
+                <div class="esquerda">
+                  <mat-form-field>
+                    <input matInput placeholder="Profundidade" autocomplete="off" [(ngModel)]="campoProfundidade">
+                  </mat-form-field>
+                </div>
+                <div class="direita">
+                  <button mat-raised-button color="primary" (click)="addValor3()">Adicionar</button>
+                </div>
+                <div class="esquerda">
+                  <mat-form-field>
+                    <mat-select placeholder="Profundidades" [(ngModel)]="valorProfundidadeSelecionado">
+                      <mat-option *ngFor="let num of valoresProfundidade" [value]="num">
+                        {{num}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="direita">
+                  <button mat-raised-button color="warn" (click)="removeValor3()">Remover</button>
+                </div>
+              </div>
+
+
+              <p></p>
+              <div style="text-align:center" class="criarProdutoButton">
+                <nav>
+                  <button mat-raised-button color="primary" (click)="criarProduto()">Criar Produto</button>
+                </nav>
+              </div>
+              <div style="text-align:center" class="limparCamposButton">
+                <nav>
+                  <button mat-raised-button color="warn" (click)="clearVariaveis()">Limpar Campos</button>
+                </nav>
+              </div>
+            </div>
+          </mat-tab>
+
+
+
+
+
+          <mat-tab label="Gerir Agregações">
+            <div class="produtoASelecionar">
+              <label>Produto a Selecionar: </label>
+              <mat-form-field>
+                <mat-select placeholder="Lista de Produtos" [(ngModel)]="selectedProduto">
+                  <mat-option *ngFor="let prod of allProdutos" id="listaProdutosUpdate" [value]="prod" (click)="selecionarProdutoAgregacoes(prod)">
+                    ID: {{prod.id}} - Nome: {{prod.nome}} - Tipo: {{prod.tipo}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="tipoValores">
+              <label>Tipo de Agregação: </label>
+              <mat-radio-group [(ngModel)]="tipoAgregacao">
+                <mat-radio-button [value]="false">Opcional</mat-radio-button>
+                <mat-radio-button [value]="true">Obrigatoria</mat-radio-button>
+              </mat-radio-group>
+            </div>
+
+            <div class="esquerda">
+              <mat-form-field>
+                <mat-select placeholder="Produtos" [(ngModel)]="selectedProdutoExistente">
+                  <mat-option *ngFor="let prod of allProdutos ; let i = index" [value]="i">
+                    Nome:{{prod.nome}} - Tipo: {{prod.tipo}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="esquerdaComPadding">
+              <mat-form-field>
+                <mat-select placeholder="Produtos Filho" [(ngModel)]="selectedProdutoFilho">
+                  <mat-option *ngFor="let prodFilho of listaProdutosFilho ; let i = index" [value]="i" (click)="selecionarProdutoFilhoAgregacoes()">
+                    Nome:{{prodFilho.nome}} - Tipo: {{prodFilho.tipo}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <mat-form-field class="esquerdaComPadding">
+              <mat-select placeholder="Restricoes" [(ngModel)]="selectedRestricao">
+                <mat-option *ngFor="let restricao of listaRestricoesDeAgregacao ; let i = index" [value]="i">
+                  Tipo:{{restricao.tipoRes}} - Parametros: {{restricao.params}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div class="botao13">
+              <button mat-raised-button color="primary" (click)="addAgregacao()">Adicionar Agregacao</button>
+            </div>
+
+
+            <div class="botao13ComPadding">
+              <button mat-raised-button color="warn" (click)="removeAgregacao()">Remover Agregacao</button>
+            </div>
+
+            <div class="botao13ComPadding">
+              <button mat-raised-button color="warn" (click)="removeRestricao()">Remover Restricao</button>
+            </div>
+
+            <div class="produtoASelecionar">
+              <mat-form-field class="esquerda">
+                <mat-select placeholder="Lista de Tipos de Restricao" [(ngModel)]="selectedTipoRestricao">
+                  <mat-option [value]="0">
+                    Volume
+                  </mat-option>
+                  <mat-option [value]="1">
+                    Materiais
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <div *ngIf="!selectedTipoRestricao" style="text-align:left">
+                <mat-form-field class="esquerdaComPadding">
+                  <input matInput placeholder="Volume Mínimo" autocomplete="off" [(ngModel)]="volumeMinimo">
+                  <mat-hint align="end">Insera percentagem de volume mínima</mat-hint>
+                </mat-form-field>
+                <mat-form-field class="esquerdaComPadding">
+                  <input matInput placeholder="Volume Máximo" autocomplete="off" [(ngModel)]="volumeMaximo">
+                  <mat-hint align="end">Insera percentagem de volume máxima</mat-hint>
+                </mat-form-field>
+              </div>
+              <div class="esquerda100">
+                <button mat-raised-button color="primary" (click)="addRestricao()">Criar Restrição</button>
+              </div>
+            </div>
+
+          </mat-tab>
+
+
+
+
+          <mat-tab label="Editar Produto">
+            <div class="produtoASelecionar">
+              <label>Produto a Selecionar: </label>
+              <mat-form-field>
+                <mat-select placeholder="Lista de Produtos" [(ngModel)]="selectedProduto">
+                  <mat-option *ngFor="let prod of allProdutos" id="listaProdutosUpdate" [value]="prod" (click)="selecionarProdutoEditar(prod)">
+                    ID: {{prod.id}} - Nome: {{prod.nome}} - Tipo: {{prod.tipo}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+
+            <div style="text-align:left">
+              <p></p>
+              <mat-form-field>
+                <input matInput placeholder="Nome Produto" autocomplete="off" [(ngModel)]="nomeProduto">
+              </mat-form-field>
+              <div class="tipoProduto">
+                <mat-form-field>
+                  <mat-select placeholder="Tipo de Produto" [(ngModel)]="selectedTipoProduto">
+                    <mat-option *ngFor="let tipo of listaTiposProduto ; let i = index" [value]="i">
+                      {{tipo}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="categoria">
+                <mat-form-field>
+                  <mat-select placeholder="Categoria" [(ngModel)]="selectedCategoria">
+                    <mat-option *ngFor="let cat of allCategorias ; let i = index" [value]="i">
+                      ID: {{cat.id}} - {{cat.descricao}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="esquerda">
+                <mat-form-field>
+                  <mat-select placeholder="Materiais" [(ngModel)]="selectedMaterialExistente">
+                    <mat-option *ngFor="let mat of allMateriais ; let i = index" [value]="i">
+                      {{mat.tipo}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="direita">
+                <button mat-raised-button color="primary" (click)="addMaterial()">Adicionar</button>
+              </div>
+
+              <div class="esquerda">
+                <mat-form-field>
+                  <mat-select placeholder="Materiais do Produto" [(ngModel)]="selectedMaterialDoProduto">
+                    <mat-option *ngFor="let mat of materiaisDoProduto ; let i = index" [value]="i">
+                      {{mat.tipo}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="direita">
+                <button mat-raised-button color="warn" (click)="removeMaterial()">Remover</button>
+              </div>
+
+
+
+              <div class="tipoValores">
+                <label>Tipo de Valores: </label>
+                <mat-radio-group [(ngModel)]="tipoValor1">
+                  <mat-radio-button [value]="0" (change)="clearValoresAltura()">Discretos</mat-radio-button>
+                  <mat-radio-button [value]="1" (change)="clearValoresAltura()">Continuos</mat-radio-button>
+                </mat-radio-group>
+              </div>
+              <div>
+                <div class="esquerda">
+                  <mat-form-field>
+                    <input matInput placeholder="Altura" autocomplete="off" [(ngModel)]="campoAltura">
+                  </mat-form-field>
+                </div>
+                <div class="direita">
+                  <button mat-raised-button color="primary" (click)="addValor1()">Adicionar</button>
+                </div>
+                <div class="esquerda">
+                  <mat-form-field>
+                    <mat-select placeholder="Alturas" [(ngModel)]="valorAlturaSelecionado">
+                      <mat-option *ngFor="let num of valoresAltura" [value]="num">
+                        {{num}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="direita">
+                  <button mat-raised-button color="warn" (click)="removeValor1()">Remover</button>
+                </div>
+              </div>
+
+              <div class="tipoValores">
+                <label>Tipo de Valores: </label>
+                <mat-radio-group [(ngModel)]="tipoValor2">
+                  <mat-radio-button [value]="0" (change)="clearValoresLargura()">Discretos</mat-radio-button>
+                  <mat-radio-button [value]="1" (change)="clearValoresLargura()">Continuos</mat-radio-button>
+                </mat-radio-group>
+              </div>
+              <div>
+                <div class="esquerda">
+                  <mat-form-field>
+                    <input matInput placeholder="Largura" autocomplete="off" [(ngModel)]="campoLargura">
+                  </mat-form-field>
+                </div>
+                <div class="direita">
+                  <button mat-raised-button color="primary" (click)="addValor2()">Adicionar</button>
+                </div>
+                <div class="esquerda">
+                  <mat-form-field>
+                    <mat-select placeholder="Larguras" [(ngModel)]="valorLarguraSelecionado">
+                      <mat-option *ngFor="let num of valoresLargura" [value]="num">
+                        {{num}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="direita">
+                  <button mat-raised-button color="warn" (click)="removeValor2()">Remover</button>
+                </div>
+              </div>
+
+              <div class="tipoValores">
+                <label>Tipo de Valores: </label>
+                <mat-radio-group [(ngModel)]="tipoValor3">
+                  <mat-radio-button [value]="0" (change)="clearValoresProfundidade()">Discretos</mat-radio-button>
+                  <mat-radio-button [value]="1" (change)="clearValoresProfundidade()">Continuos</mat-radio-button>
+                </mat-radio-group>
+              </div>
+              <div>
+                <div class="esquerda">
+                  <mat-form-field>
+                    <input matInput placeholder="Profundidade" autocomplete="off" [(ngModel)]="campoProfundidade">
+                  </mat-form-field>
+                </div>
+                <div class="direita">
+                  <button mat-raised-button color="primary" (click)="addValor3()">Adicionar</button>
+                </div>
+                <div class="esquerda">
+                  <mat-form-field>
+                    <mat-select placeholder="Profundidades" [(ngModel)]="valorProfundidadeSelecionado">
+                      <mat-option *ngFor="let num of valoresProfundidade" [value]="num">
+                        {{num}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="direita">
+                  <button mat-raised-button color="warn" (click)="removeValor3()">Remover</button>
+                </div>
+              </div>
+
+              <p></p>
+              <div style="text-align:center" class="criarProdutoButton">
+                <nav>
+                  <button mat-raised-button color="primary" (click)="editarProduto()">Guardar Alterções</button>
+                </nav>
+              </div>
+              <div style="text-align:center" class="limparCamposButton">
+                <nav>
+                  <button mat-raised-button color="warn" (click)="limparCamposEditarButton()">Limpar Campos</button>
+                </nav>
+              </div>
+            </div>
+
+
+          </mat-tab>
+          <mat-tab label="Listar Produtos">
+            <div style="text-align:left">
+              <h2>Listar Materiais</h2>
+              <ul class="produtos">
+                <li *ngFor="let prod of allProdutos">
+                  <span class="badge">{{prod.id}}</span>
+                  <span>{{prod.nome}}</span>
+                  <button class="delete" title="delete produto" (click)="deleteProdutoHTML(prod.id)">x</button>
+                </li>
+              </ul>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+<div *ngIf="flagServer">
+  <div id="main">
+    <div class="fof">
+      <h1>Não foi possível aceder ao servidor.</h1>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<div *ngIf="!flagServer">
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+
+      <!-- Nome Material -->
+      <ng-container matColumnDef="nomeMaterial">
+        <th mat-header-cell *matHeaderCellDef> Nome do Material </th>
+        <td mat-cell *matCellDef="let element"> {{element.nomeMaterial}} </td>
+      </ng-container>
+
+      <!-- Preço Material -->
+      <ng-container matColumnDef="preco">
+        <th mat-header-cell *matHeaderCellDef> Alterações de Preços (€) </th>
+        <td mat-cell *matCellDef="let element"> {{element.preco}} </td>
+      </ng-container>
+
+      <!-- Data Alterado -->
+      <ng-container matColumnDef="dataAlterado">
+        <th mat-header-cell *matHeaderCellDef> Data da alteração </th>
+        <td mat-cell *matCellDef="let element"> {{element.dataAlterado}} </td>
+      </ng-container>
+
+      <!-- Hora Alterado -->
+      <ng-container matColumnDef="horaAlterado">
+        <th mat-header-cell *matHeaderCellDef> Hora da alteração </th>
+        <td mat-cell *matCellDef="let element"> {{element.horaAlterado}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[15,30]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
+<div *ngIf="flagServer">
+  <div id="main">
+    <div class="fof">
+      <h1>Não foi possível aceder ao servidor.</h1>
+    </div>
+  </div>
+</div>
