@@ -569,9 +569,13 @@ export function addParte(indexModulo, selectParte, tipo, material, acabamento) {
 }
 
 export function validarNovaParte(parte, modulo) {
-	return modulo.alturaOcupadaTotal() + parte.altura <= modulo.altura 
+	return validarAlturaParte(parte, modulo) 
 		&& parte.largura <= modulo.largura
 		&& parte.profundidade <= modulo.profundidade;
+}
+
+export function validarAlturaParte(parte, modulo) {
+	return modulo.alturaOcupadaTotal() + parte.altura <= modulo.altura;
 }
 
 export function removerParte(indexModulo, indexParte) {
