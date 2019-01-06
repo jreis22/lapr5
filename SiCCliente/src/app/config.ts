@@ -4,7 +4,7 @@ export class Config {
     //static sicEncomendasUrl = 'https://sic-encomendas.herokuapp.com/';
     //static sicClient = 'https://arqsi-g1-sic-client.herokuapp.com/';
     
-    static sicGcUrl = process.env.SIC_GC_URL
-    static sicEncomendasUrl = process.env.SIC_ENC_URL
-    static sicEntregasUrl = process.env.SIC_ENTREGAS_URL
+    static sicGcUrl = 'https://sicgc-g8583.azurewebsites.net/api/';
+    static sicEncomendasUrl = 'https://sic-encomendas-g8583.herokuapp.com/'
+    static sicEntregasUrl = 'http://40.89.154.142:3001/'
 }
