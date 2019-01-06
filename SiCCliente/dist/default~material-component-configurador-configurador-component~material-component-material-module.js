@@ -97131,7 +97131,7 @@ var ConfiguradorComponent = /** @class */ (function () {
         itemParte.profundidade = this.profundidadeParte;
         var tipo = this.parteToIndexConfigurador(parte.tipo);
         //if (this.partesAdicionadas.filter(produto => produto.id == parte.id).length == 0)
-        if (_sic_configurador_sic_configurador_public_js_index__WEBPACK_IMPORTED_MODULE_2__["validarAlturaParte"](itemParte, this.modulosAdicionados[this.moduloAdicionadoSelecionado])) {
+        if (!_sic_configurador_sic_configurador_public_js_index__WEBPACK_IMPORTED_MODULE_2__["validarAlturaParteIndex"](itemParte, this.moduloAdicionadoSelecionado)) {
             this.displayMessage('Altura de parte inválida.');
             return;
         }
@@ -97449,7 +97449,7 @@ const COLORS = {
 /*!**********************************************************************!*\
   !*** ./src/app/sic-configurador/sic-configurador/public/js/index.js ***!
   \**********************************************************************/
-/*! exports provided: init, animate, updateDimensoes, addModulo, validarNovoModulo, removerModulo, addParte, validarNovaParte, validarAlturaParte, removerParte, updateMaterial, updateAcabamento */
+/*! exports provided: init, animate, updateDimensoes, addModulo, validarNovoModulo, removerModulo, addParte, validarNovaParte, validarAlturaParte, validarAlturaParteIndex, removerParte, updateMaterial, updateAcabamento */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -97463,6 +97463,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addParte", function() { return addParte; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "validarNovaParte", function() { return validarNovaParte; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "validarAlturaParte", function() { return validarAlturaParte; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "validarAlturaParteIndex", function() { return validarAlturaParteIndex; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removerParte", function() { return removerParte; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateMaterial", function() { return updateMaterial; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateAcabamento", function() { return updateAcabamento; });
@@ -98055,6 +98056,11 @@ function validarNovaParte(parte, modulo) {
 }
 
 function validarAlturaParte(parte, modulo) {
+	return modulo.alturaOcupadaTotal() + parte.altura <= modulo.altura;
+}
+
+function validarAlturaParteIndex(parte, moduloIndex) {
+	let modulo = armario.modulos[moduloIndex].modulo;
 	return modulo.alturaOcupadaTotal() + parte.altura <= modulo.altura;
 }
 
