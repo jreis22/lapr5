@@ -342,10 +342,11 @@ export class ConfiguradorComponent implements OnInit, AfterViewInit {
     this.itemService.addItem(itemParte)
     .subscribe(
       item => {
-        this.modulosAdicionados[this.moduloAdicionadoSelecionado].filhos.push(item);
-        this.displayMessage('Parte adicionada');
+        
         this.itemService.updateItem(this.modulosAdicionados[this.moduloAdicionadoSelecionado])
         .subscribe(updatedModulo => {
+          this.modulosAdicionados[this.moduloAdicionadoSelecionado].filhos.push(item);
+        this.displayMessage('Parte adicionada');
           this.modulosAdicionados[this.moduloAdicionadoSelecionado] = updatedModulo;
           Configurador.addParte(this.moduloAdicionadoSelecionado, itemParte, tipo, this.materialParteSelecionada, this.acabamentoMaterialParteSelecionada);
         });
